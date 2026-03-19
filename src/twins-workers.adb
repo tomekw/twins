@@ -1,6 +1,54 @@
+with Ada.Streams;
+with GNAT.Sockets;
+
+with Padlock.Configs;
+with Padlock.Contexts;
+with Padlock.Contexts.Servers;
+with Padlock.Streams;
+
+with Twins.Socket_Queues;
+
 package body Twins.Workers is
+   use GNAT;
+
+   package TLS renames Padlock;
+
    task body Worker is
+      Worker_Cfg : Config;
    begin
-      null;
+      accept Init (Cfg : Config) do
+         Worker_Cfg := Cfg;
+      end Init;
+
+      declare
+         Cfg : constant TLS.Configs.Config := TLS.Configs.Init (Worker_Cfg.Cert_File.Element, Worker_Cfg.Key_File.Element);
+         Ctx : TLS.Contexts.Servers.Server_Context := TLS.Contexts.Servers.Init (Cfg);
+
+         Client_Socket : Sockets.Socket_Type;
+         Child_Ctx : TLS.Contexts.Context;
+
+         Buffer : Streams.Stream_Element_Array (1 .. 5);
+         Last : Streams.Stream_Element_Offset;
+      begin
+         loop
+            declare
+               use type Streams.Stream_Element_Offset;
+            begin
+               Socket_Queues.Socket_Queue.Dequeue (Client_Socket);
+
+               Ctx.Accept_Socket (Child_Ctx, Client_Socket);
+
+               loop
+                  Child_Ctx.Read (Buffer, Last);
+
+                  exit when Last = 0;
+
+                  Log_Line ("Got: " & TLS.Streams.To_String (Buffer (Buffer'First .. Last)));
+
+                  Child_Ctx.Write (Buffer);
+               end loop;
+            end;
+         end loop;
+      end;
    end Worker;
 end Twins.Workers;

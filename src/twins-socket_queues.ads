@@ -3,7 +3,6 @@ with Ada.Containers.Bounded_Synchronized_Queues;
 with GNAT.Sockets;
 
 package Twins.Socket_Queues is
-   use Ada;
    use GNAT;
 
    package Socket_Queue_Interfaces is new Containers.Synchronized_Queue_Interfaces

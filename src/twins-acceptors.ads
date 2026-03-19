@@ -8,6 +8,6 @@ package Twins.Acceptors is
    end record;
 
    task type Acceptor is
-      entry Init (Acceptor_Cfg : Config);
+      entry Init (Cfg : Config);
    end Acceptor;
 end Twins.Acceptors;
