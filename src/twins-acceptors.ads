@@ -1,0 +1,13 @@
+with GNAT.Sockets;
+
+package Twins.Acceptors is
+   use GNAT;
+
+   type Config is record
+      Server_Port : Sockets.Port_Type;
+   end record;
+
+   task type Acceptor is
+      entry Init (Acceptor_Cfg : Config);
+   end Acceptor;
+end Twins.Acceptors;

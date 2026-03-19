@@ -1,0 +1,9 @@
+[package]
+name = "twins"
+version = "0.1.0-dev"
+
+[dependencies]
+padlock = "0.1.0"
+
+[dev-dependencies]
+testy = "0.1.0"
