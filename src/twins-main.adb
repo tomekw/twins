@@ -12,7 +12,7 @@ procedure Twins.Main is
 begin
    Server_Acceptor.Init (Acceptor_Cfg);
 
-   for W of Workers_Pool loop
-      W.Init (Worker_Cfg);
+   for Worker of Workers_Pool loop
+      Worker.Init (Worker_Cfg);
    end loop;
 end Twins.Main;
