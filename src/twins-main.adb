@@ -1,4 +1,5 @@
 with Twins.Acceptors;
+with Twins.Shutdown_Handlers;
 with Twins.Workers;
 
 procedure Twins.Main is
@@ -15,4 +16,6 @@ begin
    for Worker of Workers_Pool loop
       Worker.Init (Worker_Cfg);
    end loop;
+
+   Shutdown_Handlers.Shutdown_Handler.Wait;
 end Twins.Main;
