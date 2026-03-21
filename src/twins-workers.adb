@@ -6,11 +6,13 @@ with Padlock.Contexts;
 with Padlock.Contexts.Servers;
 with Padlock.Streams;
 
+with Twins.Loggers;
 with Twins.Shutdown_Handlers;
 with Twins.Socket_Queues;
 
 package body Twins.Workers is
    use GNAT;
+   use Twins.Loggers;
 
    package TLS renames Padlock;
 
@@ -48,7 +50,7 @@ package body Twins.Workers is
 
                   Child_Ctx.Read (Buffer, Last);
 
-                  Log_Line ("Request: " & TLS.Streams.To_String (Buffer (Buffer'First .. Last)));
+                  Log (Info, "Request: " & TLS.Streams.To_String (Buffer (Buffer'First .. Last)));
 
                   Child_Ctx.Write (TLS.Streams.To_Elements ("20 text/gemini" & CRLF));
                   Child_Ctx.Write (TLS.Streams.To_Elements ("# Hello from Twins!" & CRLF));

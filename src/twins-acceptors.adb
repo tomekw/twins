@@ -1,10 +1,13 @@
 with Ada.Strings;
 with Ada.Strings.Fixed;
 
+with Twins.Loggers;
 with Twins.Shutdown_Handlers;
 with Twins.Socket_Queues;
 
 package body Twins.Acceptors is
+   use Twins.Loggers;
+
    function Image (Port : Sockets.Port_Type) return String is
    begin
       return Strings.Fixed.Trim (Port'Image, Strings.Left);
@@ -34,8 +37,8 @@ package body Twins.Acceptors is
             Sockets.Bind_Socket (Server_Socket, Address);
             Sockets.Listen_Socket (Server_Socket);
 
-            Log_Line ("Twins, a Gemini server");
-            Log_Line ("Listening on " & Sockets.Image (Bind_Address) & ":" & Image (Acceptor_Cfg.Server_Port));
+            Log (Info, "Twins, a Gemini server");
+            Log (Info, "Listening on " & Sockets.Image (Bind_Address) & ":" & Image (Acceptor_Cfg.Server_Port));
 
             loop
                Sockets.Accept_Socket (Server_Socket, Client_Socket, Address);
@@ -49,6 +52,6 @@ package body Twins.Acceptors is
          Sockets.Close_Socket (Server_Socket);
       end if;
 
-      Log_Line ("Server shutting down...");
+      Log (Info, "Server shutting down...");
    end Acceptor;
 end Twins.Acceptors;
