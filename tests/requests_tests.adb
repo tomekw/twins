@@ -189,7 +189,7 @@ package body Requests_Tests is
 
    procedure Test_Valid_Percent_Encoded (T : in out Test_Context) is
       Request : constant Requests.Request := Requests.Parse ("gemini://host/foo%20bar" & CRLF);
-      Expected_Line : constant String := "gemini://host/foo%20bar";
+      Expected_Line : constant String := "gemini://host/foo bar";
    begin
       T.Expect (Request.Line = Expected_Line, "Expected: '" & Expected_Line & "', got: '" & Request.Line & "'");
    end Test_Valid_Percent_Encoded;
@@ -348,14 +348,14 @@ package body Requests_Tests is
 
    procedure Test_Valid_UTF8_Encoded (T : in out Test_Context) is
       Request : constant Requests.Request := Requests.Parse ("gemini://host/caf%C3%A9" & CRLF);
-      Expected_Line : constant String := "gemini://host/caf%C3%A9";
+      Expected_Line : constant String := "gemini://host/caf" & Character'Val (16#C3#) & Character'Val (16#A9#);
    begin
       T.Expect (Request.Line = Expected_Line, "Expected: '" & Expected_Line & "', got: '" & Request.Line & "'");
    end Test_Valid_UTF8_Encoded;
 
    procedure Test_Valid_Encoded_Regular_Char (T : in out Test_Context) is
       Request : constant Requests.Request := Requests.Parse ("gemini://host/%66oo" & CRLF);
-      Expected_Line : constant String := "gemini://host/%66oo";
+      Expected_Line : constant String := "gemini://host/foo";
    begin
       T.Expect (Request.Line = Expected_Line, "Expected: '" & Expected_Line & "', got: '" & Request.Line & "'");
    end Test_Valid_Encoded_Regular_Char;

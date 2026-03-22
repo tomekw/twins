@@ -72,9 +72,9 @@ package body Twins.Requests is
          then
             raise Parse_Error with "host is empty";
          end if;
-      end;
 
-      return (Line => String_Holders.To_Holder (Request_Line (Request_Line'First .. Request_Line'Last - CRLF'Length)));
+         return (Line => String_Holders.To_Holder (Scheme & Decoded_Line (Decoded_Line'First .. Decoded_Line'Last - CRLF'Length)));
+      end;
    end Parse;
 
    function Line (Self : Request) return String is
