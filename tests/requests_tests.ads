@@ -8,4 +8,13 @@ package Requests_Tests is
    procedure Test_Too_Long_Request (T : in out Test_Context);
    procedure Test_Wrong_Scheme (T : in out Test_Context);
    procedure Test_No_End_CRLF (T : in out Test_Context);
+   procedure Test_Embedded_CRLF (T : in out Test_Context);
+   procedure Test_Path_Traversal (T : in out Test_Context);
+   procedure Test_Encoded_Path_Traversal (T : in out Test_Context);
+   procedure Test_Mixed_Encoded_Path_Traversal (T : in out Test_Context);
+   procedure Test_Dot_Segment (T : in out Test_Context);
+   procedure Test_Encoded_Dot_Segment (T : in out Test_Context);
+   procedure Test_Valid_With_Port (T : in out Test_Context);
+   procedure Test_Valid_With_Query (T : in out Test_Context);
+   procedure Test_Valid_Max_Length (T : in out Test_Context);
 end Requests_Tests;
