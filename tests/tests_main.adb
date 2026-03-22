@@ -23,6 +23,10 @@ begin
    Test_Runner.Add ("Returns Request on valid request with port", Requests_Tests.Test_Valid_With_Port'Access);
    Test_Runner.Add ("Returns Request on valid request with query", Requests_Tests.Test_Valid_With_Query'Access);
    Test_Runner.Add ("Returns Request on max length request", Requests_Tests.Test_Valid_Max_Length'Access);
+   Test_Runner.Add ("Raises Parse_Error on invalid percent encoding", Requests_Tests.Test_Invalid_Percent_Encoding'Access);
+   Test_Runner.Add ("Returns Request on valid percent-encoded path", Requests_Tests.Test_Valid_Percent_Encoded'Access);
+   Test_Runner.Add ("Raises Parse_Error on uppercase encoded traversal", Requests_Tests.Test_Uppercase_Encoded_Traversal'Access);
+   Test_Runner.Add ("Raises Parse_Error on encoded slash traversal", Requests_Tests.Test_Encoded_Slash_Traversal'Access);
 
    Test_Runner.Run (Test_Reporter);
 end Tests_Main;

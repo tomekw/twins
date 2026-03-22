@@ -142,4 +142,44 @@ package body Requests_Tests is
    begin
       T.Expect (Request.Line = Expected_Line, "Expected length:" & Expected_Line'Length'Image & ", got:" & Request.Line'Length'Image);
    end Test_Valid_Max_Length;
+
+   procedure Invalid_Percent_Encoding is
+      Unused_Request : Requests.Request;
+   begin
+      Unused_Request := Requests.Parse ("gemini://host/foo%zz" & CRLF);
+   end Invalid_Percent_Encoding;
+
+   procedure Test_Invalid_Percent_Encoding (T : in out Test_Context) is
+   begin
+      T.Expect_Raises (Invalid_Percent_Encoding'Access, Requests.Parse_Error'Identity, "invalid percent encoding");
+   end Test_Invalid_Percent_Encoding;
+
+   procedure Test_Valid_Percent_Encoded (T : in out Test_Context) is
+      Request : constant Requests.Request := Requests.Parse ("gemini://host/foo%20bar" & CRLF);
+      Expected_Line : constant String := "gemini://host/foo%20bar";
+   begin
+      T.Expect (Request.Line = Expected_Line, "Expected: '" & Expected_Line & "', got: '" & Request.Line & "'");
+   end Test_Valid_Percent_Encoded;
+
+   procedure Uppercase_Encoded_Traversal is
+      Unused_Request : Requests.Request;
+   begin
+      Unused_Request := Requests.Parse ("gemini://host/%2E%2E/bar" & CRLF);
+   end Uppercase_Encoded_Traversal;
+
+   procedure Test_Uppercase_Encoded_Traversal (T : in out Test_Context) is
+   begin
+      T.Expect_Raises (Uppercase_Encoded_Traversal'Access, Requests.Parse_Error'Identity, "path contains ..");
+   end Test_Uppercase_Encoded_Traversal;
+
+   procedure Encoded_Slash_Traversal is
+      Unused_Request : Requests.Request;
+   begin
+      Unused_Request := Requests.Parse ("gemini://host/foo%2f..%2fbar" & CRLF);
+   end Encoded_Slash_Traversal;
+
+   procedure Test_Encoded_Slash_Traversal (T : in out Test_Context) is
+   begin
+      T.Expect_Raises (Encoded_Slash_Traversal'Access, Requests.Parse_Error'Identity, "path contains ..");
+   end Test_Encoded_Slash_Traversal;
 end Requests_Tests;
