@@ -33,6 +33,7 @@ package body Twins.Requests is
 
    function Parse (Request_Line : String) return Request is
       CRLF : constant String := [ASCII.CR, ASCII.LF];
+      Scheme : constant String := "gemini://";
    begin
       if Request_Line'Length > 1024 then
          raise Parse_Error with "request too long";
@@ -51,7 +52,7 @@ package body Twins.Requests is
       end if;
 
       declare
-         Decoded_Line : constant String := Percent_Decode (Request_Line);
+         Decoded_Line : constant String := Percent_Decode (Request_Line (Request_Line'First + Scheme'Length .. Request_Line'Last));
       begin
          if Strings.Fixed.Index (Decoded_Line, "/../") /= 0 or else
             Strings.Fixed.Index (Decoded_Line, "/.." & CRLF) /= 0
@@ -63,6 +64,13 @@ package body Twins.Requests is
             Strings.Fixed.Index (Decoded_Line, "/." & CRLF) /= 0
          then
             raise Parse_Error with "path contains . segment";
+         end if;
+
+         if Strings.Fixed.Index (Decoded_Line, "/") = Decoded_Line'First or else
+            Strings.Fixed.Index (Decoded_Line, ":") = Decoded_Line'First or else
+            Strings.Fixed.Index (Decoded_Line, CRLF) = Decoded_Line'First
+         then
+            raise Parse_Error with "host is empty";
          end if;
       end;
 

@@ -143,6 +143,39 @@ package body Requests_Tests is
       T.Expect (Request.Line = Expected_Line, "Expected length:" & Expected_Line'Length'Image & ", got:" & Request.Line'Length'Image);
    end Test_Valid_Max_Length;
 
+   procedure Empty_Host_With_Path is
+      Unused_Request : Requests.Request;
+   begin
+      Unused_Request := Requests.Parse ("gemini:///path" & CRLF);
+   end Empty_Host_With_Path;
+
+   procedure Test_Empty_Host_With_Path (T : in out Test_Context) is
+   begin
+      T.Expect_Raises (Empty_Host_With_Path'Access, Requests.Parse_Error'Identity, "host is empty");
+   end Test_Empty_Host_With_Path;
+
+   procedure Empty_Host_Bare is
+      Unused_Request : Requests.Request;
+   begin
+      Unused_Request := Requests.Parse ("gemini:///" & CRLF);
+   end Empty_Host_Bare;
+
+   procedure Test_Empty_Host_Bare (T : in out Test_Context) is
+   begin
+      T.Expect_Raises (Empty_Host_Bare'Access, Requests.Parse_Error'Identity, "host is empty");
+   end Test_Empty_Host_Bare;
+
+   procedure Empty_Host_With_Port is
+      Unused_Request : Requests.Request;
+   begin
+      Unused_Request := Requests.Parse ("gemini://:1965/path" & CRLF);
+   end Empty_Host_With_Port;
+
+   procedure Test_Empty_Host_With_Port (T : in out Test_Context) is
+   begin
+      T.Expect_Raises (Empty_Host_With_Port'Access, Requests.Parse_Error'Identity, "host is empty");
+   end Test_Empty_Host_With_Port;
+
    procedure Invalid_Percent_Encoding is
       Unused_Request : Requests.Request;
    begin

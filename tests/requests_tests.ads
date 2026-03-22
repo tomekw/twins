@@ -17,6 +17,9 @@ package Requests_Tests is
    procedure Test_Valid_With_Port (T : in out Test_Context);
    procedure Test_Valid_With_Query (T : in out Test_Context);
    procedure Test_Valid_Max_Length (T : in out Test_Context);
+   procedure Test_Empty_Host_With_Path (T : in out Test_Context);
+   procedure Test_Empty_Host_Bare (T : in out Test_Context);
+   procedure Test_Empty_Host_With_Port (T : in out Test_Context);
    procedure Test_Invalid_Percent_Encoding (T : in out Test_Context);
    procedure Test_Valid_Percent_Encoded (T : in out Test_Context);
    procedure Test_Uppercase_Encoded_Traversal (T : in out Test_Context);

@@ -23,6 +23,9 @@ begin
    Test_Runner.Add ("Returns Request on valid request with port", Requests_Tests.Test_Valid_With_Port'Access);
    Test_Runner.Add ("Returns Request on valid request with query", Requests_Tests.Test_Valid_With_Query'Access);
    Test_Runner.Add ("Returns Request on max length request", Requests_Tests.Test_Valid_Max_Length'Access);
+   Test_Runner.Add ("Raises Parse_Error on empty host with path", Requests_Tests.Test_Empty_Host_With_Path'Access);
+   Test_Runner.Add ("Raises Parse_Error on empty host bare", Requests_Tests.Test_Empty_Host_Bare'Access);
+   Test_Runner.Add ("Raises Parse_Error on empty host with port", Requests_Tests.Test_Empty_Host_With_Port'Access);
    Test_Runner.Add ("Raises Parse_Error on invalid percent encoding", Requests_Tests.Test_Invalid_Percent_Encoding'Access);
    Test_Runner.Add ("Returns Request on valid percent-encoded path", Requests_Tests.Test_Valid_Percent_Encoded'Access);
    Test_Runner.Add ("Raises Parse_Error on uppercase encoded traversal", Requests_Tests.Test_Uppercase_Encoded_Traversal'Access);
