@@ -215,4 +215,183 @@ package body Requests_Tests is
    begin
       T.Expect_Raises (Encoded_Slash_Traversal'Access, Requests.Parse_Error'Identity, "path contains ..");
    end Test_Encoded_Slash_Traversal;
+   procedure CRLF_Only is
+      Unused_Request : Requests.Request;
+   begin
+      Unused_Request := Requests.Parse (CRLF);
+   end CRLF_Only;
+
+   procedure Test_CRLF_Only (T : in out Test_Context) is
+   begin
+      T.Expect_Raises (CRLF_Only'Access, Requests.Parse_Error'Identity, "request doesn't start with gemini://");
+   end Test_CRLF_Only;
+
+   procedure Garbage_Input is
+      Unused_Request : Requests.Request;
+   begin
+      Unused_Request := Requests.Parse ("hello" & CRLF);
+   end Garbage_Input;
+
+   procedure Test_Garbage_Input (T : in out Test_Context) is
+   begin
+      T.Expect_Raises (Garbage_Input'Access, Requests.Parse_Error'Identity, "request doesn't start with gemini://");
+   end Test_Garbage_Input;
+
+   procedure Uppercase_Scheme is
+      Unused_Request : Requests.Request;
+   begin
+      Unused_Request := Requests.Parse ("GEMINI://example.com/" & CRLF);
+   end Uppercase_Scheme;
+
+   procedure Test_Uppercase_Scheme (T : in out Test_Context) is
+   begin
+      T.Expect_Raises (Uppercase_Scheme'Access, Requests.Parse_Error'Identity, "request doesn't start with gemini://");
+   end Test_Uppercase_Scheme;
+
+   procedure Leading_Space_Scheme is
+      Unused_Request : Requests.Request;
+   begin
+      Unused_Request := Requests.Parse (" gemini://example.com/" & CRLF);
+   end Leading_Space_Scheme;
+
+   procedure Test_Leading_Space_Scheme (T : in out Test_Context) is
+   begin
+      T.Expect_Raises (Leading_Space_Scheme'Access, Requests.Parse_Error'Identity, "request doesn't start with gemini://");
+   end Test_Leading_Space_Scheme;
+
+   procedure No_Line_Ending is
+      Unused_Request : Requests.Request;
+   begin
+      Unused_Request := Requests.Parse ("gemini://example.com/");
+   end No_Line_Ending;
+
+   procedure Test_No_Line_Ending (T : in out Test_Context) is
+   begin
+      T.Expect_Raises (No_Line_Ending'Access, Requests.Parse_Error'Identity, "request doesn't end with \r\n");
+   end Test_No_Line_Ending;
+
+   procedure LF_Only_Ending is
+      Unused_Request : Requests.Request;
+   begin
+      Unused_Request := Requests.Parse ("gemini://example.com/" & ASCII.LF);
+   end LF_Only_Ending;
+
+   procedure Test_LF_Only_Ending (T : in out Test_Context) is
+   begin
+      T.Expect_Raises (LF_Only_Ending'Access, Requests.Parse_Error'Identity, "request doesn't end with \r\n");
+   end Test_LF_Only_Ending;
+
+   procedure CR_Only_Ending is
+      Unused_Request : Requests.Request;
+   begin
+      Unused_Request := Requests.Parse ("gemini://example.com/" & ASCII.CR);
+   end CR_Only_Ending;
+
+   procedure Test_CR_Only_Ending (T : in out Test_Context) is
+   begin
+      T.Expect_Raises (CR_Only_Ending'Access, Requests.Parse_Error'Identity, "request doesn't end with \r\n");
+   end Test_CR_Only_Ending;
+
+   procedure Bare_Dotdot is
+      Unused_Request : Requests.Request;
+   begin
+      Unused_Request := Requests.Parse ("gemini://host/.." & CRLF);
+   end Bare_Dotdot;
+
+   procedure Test_Bare_Dotdot (T : in out Test_Context) is
+   begin
+      T.Expect_Raises (Bare_Dotdot'Access, Requests.Parse_Error'Identity, "path contains ..");
+   end Test_Bare_Dotdot;
+
+   procedure Bare_Dot is
+      Unused_Request : Requests.Request;
+   begin
+      Unused_Request := Requests.Parse ("gemini://host/." & CRLF);
+   end Bare_Dot;
+
+   procedure Test_Bare_Dot (T : in out Test_Context) is
+   begin
+      T.Expect_Raises (Bare_Dot'Access, Requests.Parse_Error'Identity, "path contains . segment");
+   end Test_Bare_Dot;
+
+   procedure Uppercase_Encoded_Dot is
+      Unused_Request : Requests.Request;
+   begin
+      Unused_Request := Requests.Parse ("gemini://host/%2E/foo" & CRLF);
+   end Uppercase_Encoded_Dot;
+
+   procedure Test_Uppercase_Encoded_Dot (T : in out Test_Context) is
+   begin
+      T.Expect_Raises (Uppercase_Encoded_Dot'Access, Requests.Parse_Error'Identity, "path contains . segment");
+   end Test_Uppercase_Encoded_Dot;
+
+   procedure Test_Valid_No_Path (T : in out Test_Context) is
+      Request : constant Requests.Request := Requests.Parse ("gemini://host" & CRLF);
+      Expected_Line : constant String := "gemini://host";
+   begin
+      T.Expect (Request.Line = Expected_Line, "Expected: '" & Expected_Line & "', got: '" & Request.Line & "'");
+   end Test_Valid_No_Path;
+
+   procedure Test_Valid_Fragment (T : in out Test_Context) is
+      Request : constant Requests.Request := Requests.Parse ("gemini://host/foo#section" & CRLF);
+      Expected_Line : constant String := "gemini://host/foo#section";
+   begin
+      T.Expect (Request.Line = Expected_Line, "Expected: '" & Expected_Line & "', got: '" & Request.Line & "'");
+   end Test_Valid_Fragment;
+
+   procedure Test_Valid_Query_Fragment (T : in out Test_Context) is
+      Request : constant Requests.Request := Requests.Parse ("gemini://host/foo?q=1#frag" & CRLF);
+      Expected_Line : constant String := "gemini://host/foo?q=1#frag";
+   begin
+      T.Expect (Request.Line = Expected_Line, "Expected: '" & Expected_Line & "', got: '" & Request.Line & "'");
+   end Test_Valid_Query_Fragment;
+
+   procedure Test_Valid_UTF8_Encoded (T : in out Test_Context) is
+      Request : constant Requests.Request := Requests.Parse ("gemini://host/caf%C3%A9" & CRLF);
+      Expected_Line : constant String := "gemini://host/caf%C3%A9";
+   begin
+      T.Expect (Request.Line = Expected_Line, "Expected: '" & Expected_Line & "', got: '" & Request.Line & "'");
+   end Test_Valid_UTF8_Encoded;
+
+   procedure Test_Valid_Encoded_Regular_Char (T : in out Test_Context) is
+      Request : constant Requests.Request := Requests.Parse ("gemini://host/%66oo" & CRLF);
+      Expected_Line : constant String := "gemini://host/%66oo";
+   begin
+      T.Expect (Request.Line = Expected_Line, "Expected: '" & Expected_Line & "', got: '" & Request.Line & "'");
+   end Test_Valid_Encoded_Regular_Char;
+
+   procedure Test_Valid_Dotdot_Prefix (T : in out Test_Context) is
+      Request : constant Requests.Request := Requests.Parse ("gemini://host/..foo" & CRLF);
+      Expected_Line : constant String := "gemini://host/..foo";
+   begin
+      T.Expect (Request.Line = Expected_Line, "Expected: '" & Expected_Line & "', got: '" & Request.Line & "'");
+   end Test_Valid_Dotdot_Prefix;
+
+   procedure Test_Valid_Dotdot_Middle (T : in out Test_Context) is
+      Request : constant Requests.Request := Requests.Parse ("gemini://host/foo..bar" & CRLF);
+      Expected_Line : constant String := "gemini://host/foo..bar";
+   begin
+      T.Expect (Request.Line = Expected_Line, "Expected: '" & Expected_Line & "', got: '" & Request.Line & "'");
+   end Test_Valid_Dotdot_Middle;
+
+   procedure Test_Valid_Dotdot_Suffix (T : in out Test_Context) is
+      Request : constant Requests.Request := Requests.Parse ("gemini://host/foo.." & CRLF);
+      Expected_Line : constant String := "gemini://host/foo..";
+   begin
+      T.Expect (Request.Line = Expected_Line, "Expected: '" & Expected_Line & "', got: '" & Request.Line & "'");
+   end Test_Valid_Dotdot_Suffix;
+
+   procedure Test_Valid_Dotfile (T : in out Test_Context) is
+      Request : constant Requests.Request := Requests.Parse ("gemini://host/.hidden" & CRLF);
+      Expected_Line : constant String := "gemini://host/.hidden";
+   begin
+      T.Expect (Request.Line = Expected_Line, "Expected: '" & Expected_Line & "', got: '" & Request.Line & "'");
+   end Test_Valid_Dotfile;
+
+   procedure Test_Valid_Nested_Dotfile (T : in out Test_Context) is
+      Request : constant Requests.Request := Requests.Parse ("gemini://host/foo/.hidden" & CRLF);
+      Expected_Line : constant String := "gemini://host/foo/.hidden";
+   begin
+      T.Expect (Request.Line = Expected_Line, "Expected: '" & Expected_Line & "', got: '" & Request.Line & "'");
+   end Test_Valid_Nested_Dotfile;
 end Requests_Tests;

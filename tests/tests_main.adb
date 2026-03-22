@@ -31,5 +31,26 @@ begin
    Test_Runner.Add ("Raises Parse_Error on uppercase encoded traversal", Requests_Tests.Test_Uppercase_Encoded_Traversal'Access);
    Test_Runner.Add ("Raises Parse_Error on encoded slash traversal", Requests_Tests.Test_Encoded_Slash_Traversal'Access);
 
+   Test_Runner.Add ("Rejects CRLF only", Requests_Tests.Test_CRLF_Only'Access);
+   Test_Runner.Add ("Rejects garbage input", Requests_Tests.Test_Garbage_Input'Access);
+   Test_Runner.Add ("Rejects uppercase scheme", Requests_Tests.Test_Uppercase_Scheme'Access);
+   Test_Runner.Add ("Rejects leading space in scheme", Requests_Tests.Test_Leading_Space_Scheme'Access);
+   Test_Runner.Add ("Rejects no line ending", Requests_Tests.Test_No_Line_Ending'Access);
+   Test_Runner.Add ("Rejects LF only ending", Requests_Tests.Test_LF_Only_Ending'Access);
+   Test_Runner.Add ("Rejects CR only ending", Requests_Tests.Test_CR_Only_Ending'Access);
+   Test_Runner.Add ("Rejects bare .. at end of path", Requests_Tests.Test_Bare_Dotdot'Access);
+   Test_Runner.Add ("Rejects bare . at end of path", Requests_Tests.Test_Bare_Dot'Access);
+   Test_Runner.Add ("Rejects uppercase encoded dot segment", Requests_Tests.Test_Uppercase_Encoded_Dot'Access);
+   Test_Runner.Add ("Valid request with no path", Requests_Tests.Test_Valid_No_Path'Access);
+   Test_Runner.Add ("Valid request with fragment", Requests_Tests.Test_Valid_Fragment'Access);
+   Test_Runner.Add ("Valid request with query and fragment", Requests_Tests.Test_Valid_Query_Fragment'Access);
+   Test_Runner.Add ("Valid request with UTF-8 percent encoding", Requests_Tests.Test_Valid_UTF8_Encoded'Access);
+   Test_Runner.Add ("Valid request with encoded regular char", Requests_Tests.Test_Valid_Encoded_Regular_Char'Access);
+   Test_Runner.Add ("Valid .. as filename prefix", Requests_Tests.Test_Valid_Dotdot_Prefix'Access);
+   Test_Runner.Add ("Valid .. in middle of filename", Requests_Tests.Test_Valid_Dotdot_Middle'Access);
+   Test_Runner.Add ("Valid .. as filename suffix", Requests_Tests.Test_Valid_Dotdot_Suffix'Access);
+   Test_Runner.Add ("Valid dotfile", Requests_Tests.Test_Valid_Dotfile'Access);
+   Test_Runner.Add ("Valid nested dotfile", Requests_Tests.Test_Valid_Nested_Dotfile'Access);
+
    Test_Runner.Run (Test_Reporter);
 end Tests_Main;
