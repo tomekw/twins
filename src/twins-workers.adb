@@ -120,7 +120,7 @@ package body Twins.Workers is
                   Client_Socket := Sockets.No_Socket;
                exception
                   when Streams.Stream_IO.Name_Error | Streams.Stream_IO.Use_Error =>
-                     Log (Error, "Uanble to open file");
+                     Log (Error, "Unable to open file");
 
                      begin
                         Child_Ctx.Write (TLS.Streams.To_Elements ("40 Temporary Failure" & CRLF));
