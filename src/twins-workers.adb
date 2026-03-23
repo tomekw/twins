@@ -57,7 +57,7 @@ package body Twins.Workers is
                   begin
                      Request := Requests.Parse (Request_Line);
 
-                     Log (Info, Request.Line);
+                     Log (Info, Request.Path);
 
                      Child_Ctx.Write (TLS.Streams.To_Elements ("20 text/gemini" & CRLF));
                      Child_Ctx.Write (TLS.Streams.To_Elements ("# Hello from Twins!" & CRLF));

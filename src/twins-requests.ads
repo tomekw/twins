@@ -5,11 +5,17 @@ package Twins.Requests is
 
    function Parse (Request_Line : String) return Request;
 
-   function Line (Self : Request) return String;
+   function Host (Self : Request) return String;
+
+   function Path (Self : Request) return String;
+
+   function Params (Self : Request) return String;
 
 private
 
    type Request is record
-      Line : String_Holders.Holder;
+      Host : String_Holders.Holder;
+      Path : String_Holders.Holder;
+      Params : String_Holders.Holder;
    end record;
 end Twins.Requests;

@@ -52,33 +52,54 @@ package body Twins.Requests is
       end if;
 
       declare
-         Decoded_Line : constant String := Percent_Decode (Request_Line (Request_Line'First + Scheme'Length .. Request_Line'Last));
+         Line : constant String := Request_Line (Request_Line'First + Scheme'Length .. Request_Line'Last - CRLF'Length);
+
+         Slash : constant Natural := Strings.Fixed.Index (Line, "/");
+         Line_After_Host : constant String := (if Slash = 0 then "" else Line (Slash + 1 .. Line'Last));
+         Q_Mark : constant Natural := Strings.Fixed.Index (Line_After_Host, "?");
+
+         Host : constant String := Line (Line'First .. (if Slash = 0 then Line'Last else Slash - 1));
+         Path : constant String := Percent_Decode ((if Slash = 0 then "" elsif Q_Mark = 0 then Line_After_Host else Line (Line_After_Host'First .. Q_Mark - 1)));
+         Params : constant String := (if Q_Mark = 0 then "" else Line_After_Host (Q_Mark + 1 .. Line_After_Host'Last));
       begin
-         if Strings.Fixed.Index (Decoded_Line, "/../") /= 0 or else
-            Strings.Fixed.Index (Decoded_Line, "/.." & CRLF) /= 0
-         then
-            raise Parse_Error with "path contains ..";
-         end if;
-
-         if Strings.Fixed.Index (Decoded_Line, "/./") /= 0 or else
-            Strings.Fixed.Index (Decoded_Line, "/." & CRLF) /= 0
-         then
-            raise Parse_Error with "path contains . segment";
-         end if;
-
-         if Strings.Fixed.Index (Decoded_Line, "/") = Decoded_Line'First or else
-            Strings.Fixed.Index (Decoded_Line, ":") = Decoded_Line'First or else
-            Strings.Fixed.Index (Decoded_Line, CRLF) = Decoded_Line'First
+         if Host'Length = 0 or else
+            Host (Host'First) = ':'
          then
             raise Parse_Error with "host is empty";
          end if;
 
-         return (Line => String_Holders.To_Holder (Scheme & Decoded_Line (Decoded_Line'First .. Decoded_Line'Last - CRLF'Length)));
+         if Strings.Fixed.Index (Path, "/../") /= 0 or else
+            Strings.Fixed.Index (Path, "/..", Going => Strings.Backward) = Path'Last - 2 or else
+            Path = ".." or else
+            (Path'Length >= 3 and then Path (Path'First .. Path'First + 2) = "../")
+         then
+            raise Parse_Error with "path contains ..";
+         end if;
+
+         if Strings.Fixed.Index (Path, "/./") /= 0 or else
+            Strings.Fixed.Index (Path, "/.", Going => Strings.Backward) = Path'Last - 1 or else
+            Path = "." or else
+            (Path'Length >= 2 and then Path (Path'First .. Path'First + 1) = "./")
+         then
+            raise Parse_Error with "path contains . segment";
+         end if;
+
+         return (Host => String_Holders.To_Holder (Host), Path => String_Holders.To_Holder (Path), Params => String_Holders.To_Holder (Params));
       end;
    end Parse;
 
-   function Line (Self : Request) return String is
+   function Host (Self : Request) return String is
    begin
-      return Self.Line.Element;
-   end Line;
+      return Self.Host.Element;
+   end Host;
+
+   function Path (Self : Request) return String is
+   begin
+      return Self.Path.Element;
+   end Path;
+
+   function Params (Self : Request) return String is
+   begin
+      return Self.Params.Element;
+   end Params;
 end Twins.Requests;
