@@ -1,4 +1,9 @@
+with Ada.Containers.Indefinite_Hashed_Maps;
+with Ada.Directories;
 with Ada.Streams;
+with Ada.Streams.Stream_IO;
+with Ada.Strings.Equal_Case_Insensitive;
+with Ada.Strings.Hash_Case_Insensitive;
 with GNAT.Sockets;
 
 with Padlock.Configs;
@@ -16,6 +21,12 @@ package body Twins.Workers is
    use Twins.Loggers;
 
    package TLS renames Padlock;
+
+   package Extension_To_Mime_Type_Maps is new Containers.Indefinite_Hashed_Maps
+      (Key_Type => String,
+       Element_Type => String,
+       Hash => Strings.Hash_Case_Insensitive,
+       Equivalent_Keys => Strings.Equal_Case_Insensitive);
 
    task body Worker is
       use type Sockets.Socket_Type;
@@ -57,10 +68,33 @@ package body Twins.Workers is
                   begin
                      Request := Requests.Parse (Request_Line);
 
-                     Log (Info, Request.Path);
+                     Log (Info, Request.Content_Path);
 
-                     Child_Ctx.Write (TLS.Streams.To_Elements ("20 text/gemini" & CRLF));
-                     Child_Ctx.Write (TLS.Streams.To_Elements ("# Hello from Twins!" & CRLF));
+                     declare
+                        Content_Full_Path : constant String := Worker_Cfg.Content_Root.Element & "/" & Request.Content_Path;
+                     begin
+                        if not Directories.Exists (Content_Full_Path) then
+                           Child_Ctx.Write (TLS.Streams.To_Elements ("51 Not Found" & CRLF));
+                        else
+                           declare
+                              File : Streams.Stream_IO.File_Type;
+                              Transfer_Buffer : Streams.Stream_Element_Array (1 .. 8192);
+                              Transfer_Offset : Streams.Stream_Element_Offset;
+                           begin
+                              Streams.Stream_IO.Open (File, Streams.Stream_IO.In_File, Content_Full_Path);
+
+                              Child_Ctx.Write (TLS.Streams.To_Elements ("20 text/gemini" & CRLF));
+
+                              loop
+                                 Streams.Stream_IO.Read (File, Transfer_Buffer, Transfer_Offset);
+                                 exit when Transfer_Offset < Transfer_Buffer'First;
+                                 Child_Ctx.Write (Transfer_Buffer (Transfer_Buffer'First .. Transfer_Offset));
+                              end loop;
+
+                              Streams.Stream_IO.Close (File);
+                           end;
+                        end if;
+                     end;
                   exception
                      when E : Requests.Parse_Error =>
                         Log (Error, E.Exception_Message);
@@ -70,6 +104,28 @@ package body Twins.Workers is
                   Child_Ctx.Close;
                   Sockets.Close_Socket (Client_Socket);
                   Client_Socket := Sockets.No_Socket;
+               exception
+                  when Streams.Stream_IO.Name_Error | Streams.Stream_IO.Use_Error =>
+                     begin
+                        Child_Ctx.Write (TLS.Streams.To_Elements ("40 Temporary Failure" & CRLF));
+                        Child_Ctx.Close;
+                        Sockets.Close_Socket (Client_Socket);
+                        Client_Socket := Sockets.No_Socket;
+                     exception
+                        when Cleanup_E : others =>
+                           Log (Error, Cleanup_E.Exception_Message);
+                     end;
+                  when E : others =>
+                     Log (Error, E.Exception_Message);
+
+                     begin
+                        Child_Ctx.Close;
+                        Sockets.Close_Socket (Client_Socket);
+                        Client_Socket := Sockets.No_Socket;
+                     exception
+                        when Cleanup_E : others =>
+                           Log (Error, Cleanup_E.Exception_Message);
+                     end;
                end;
             end loop;
          end;
