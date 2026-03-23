@@ -8,9 +8,9 @@ package body Requests_Tests is
    procedure Test_Valid_Request (T : in out Test_Context) is
       R : constant Requests.Request := Requests.Parse ("gemini://example.com/" & CRLF);
    begin
-      T.Expect (R.Host = "example.com", "Host: " & R.Host);
-      T.Expect (R.Path = "", "Path: " & R.Path);
-      T.Expect (R.Params = "", "Params: " & R.Params);
+      T.Expect (R.Host = "example.com", "Host: Expected: 'example.com', got: '" & R.Host & "'");
+      T.Expect (R.Path = "", "Path: Expected: '', got: '" & R.Path & "'");
+      T.Expect (R.Params = "", "Params: Expected: '', got: '" & R.Params & "'");
    end Test_Valid_Request;
 
    procedure Empty_Request is
@@ -126,25 +126,25 @@ package body Requests_Tests is
    procedure Test_Valid_With_Port (T : in out Test_Context) is
       R : constant Requests.Request := Requests.Parse ("gemini://host:1965/foo" & CRLF);
    begin
-      T.Expect (R.Host = "host:1965", "Host: " & R.Host);
-      T.Expect (R.Path = "foo", "Path: " & R.Path);
-      T.Expect (R.Params = "", "Params: " & R.Params);
+      T.Expect (R.Host = "host:1965", "Host: Expected: 'host:1965', got: '" & R.Host & "'");
+      T.Expect (R.Path = "foo", "Path: Expected: 'foo', got: '" & R.Path & "'");
+      T.Expect (R.Params = "", "Params: Expected: '', got: '" & R.Params & "'");
    end Test_Valid_With_Port;
 
    procedure Test_Valid_With_Query (T : in out Test_Context) is
       R : constant Requests.Request := Requests.Parse ("gemini://host/foo?query=1" & CRLF);
    begin
-      T.Expect (R.Host = "host", "Host: " & R.Host);
-      T.Expect (R.Path = "foo", "Path: " & R.Path);
-      T.Expect (R.Params = "query=1", "Params: " & R.Params);
+      T.Expect (R.Host = "host", "Host: Expected: 'host', got: '" & R.Host & "'");
+      T.Expect (R.Path = "foo", "Path: Expected: 'foo', got: '" & R.Path & "'");
+      T.Expect (R.Params = "query=1", "Params: Expected: 'query=1', got: '" & R.Params & "'");
    end Test_Valid_With_Query;
 
    procedure Test_Valid_Max_Length (T : in out Test_Context) is
       R : constant Requests.Request := Requests.Parse ("gemini://" & [1 .. 1013 => 'a'] & CRLF);
    begin
-      T.Expect (R.Host = [1 .. 1013 => 'a'], "Host length:" & R.Host'Length'Image);
-      T.Expect (R.Path = "", "Path: " & R.Path);
-      T.Expect (R.Params = "", "Params: " & R.Params);
+      T.Expect (R.Host = [1 .. 1013 => 'a'], "Host: Expected length: 1013, got:" & R.Host'Length'Image);
+      T.Expect (R.Path = "", "Path: Expected: '', got: '" & R.Path & "'");
+      T.Expect (R.Params = "", "Params: Expected: '', got: '" & R.Params & "'");
    end Test_Valid_Max_Length;
 
    procedure Empty_Host_With_Path is
@@ -194,9 +194,9 @@ package body Requests_Tests is
    procedure Test_Valid_Percent_Encoded (T : in out Test_Context) is
       R : constant Requests.Request := Requests.Parse ("gemini://host/foo%20bar" & CRLF);
    begin
-      T.Expect (R.Host = "host", "Host: " & R.Host);
-      T.Expect (R.Path = "foo bar", "Path: " & R.Path);
-      T.Expect (R.Params = "", "Params: " & R.Params);
+      T.Expect (R.Host = "host", "Host: Expected: 'host', got: '" & R.Host & "'");
+      T.Expect (R.Path = "foo bar", "Path: Expected: 'foo bar', got: '" & R.Path & "'");
+      T.Expect (R.Params = "", "Params: Expected: '', got: '" & R.Params & "'");
    end Test_Valid_Percent_Encoded;
 
    procedure Uppercase_Encoded_Traversal is
@@ -333,80 +333,80 @@ package body Requests_Tests is
    procedure Test_Valid_No_Path (T : in out Test_Context) is
       R : constant Requests.Request := Requests.Parse ("gemini://host" & CRLF);
    begin
-      T.Expect (R.Host = "host", "Host: " & R.Host);
-      T.Expect (R.Path = "", "Path: " & R.Path);
-      T.Expect (R.Params = "", "Params: " & R.Params);
+      T.Expect (R.Host = "host", "Host: Expected: 'host', got: '" & R.Host & "'");
+      T.Expect (R.Path = "", "Path: Expected: '', got: '" & R.Path & "'");
+      T.Expect (R.Params = "", "Params: Expected: '', got: '" & R.Params & "'");
    end Test_Valid_No_Path;
 
    procedure Test_Valid_Fragment (T : in out Test_Context) is
       R : constant Requests.Request := Requests.Parse ("gemini://host/foo#section" & CRLF);
    begin
-      T.Expect (R.Host = "host", "Host: " & R.Host);
-      T.Expect (R.Path = "foo#section", "Path: " & R.Path);
-      T.Expect (R.Params = "", "Params: " & R.Params);
+      T.Expect (R.Host = "host", "Host: Expected: 'host', got: '" & R.Host & "'");
+      T.Expect (R.Path = "foo#section", "Path: Expected: 'foo#section', got: '" & R.Path & "'");
+      T.Expect (R.Params = "", "Params: Expected: '', got: '" & R.Params & "'");
    end Test_Valid_Fragment;
 
    procedure Test_Valid_Query_Fragment (T : in out Test_Context) is
       R : constant Requests.Request := Requests.Parse ("gemini://host/foo?q=1#frag" & CRLF);
    begin
-      T.Expect (R.Host = "host", "Host: " & R.Host);
-      T.Expect (R.Path = "foo", "Path: " & R.Path);
-      T.Expect (R.Params = "q=1#frag", "Params: " & R.Params);
+      T.Expect (R.Host = "host", "Host: Expected: 'host', got: '" & R.Host & "'");
+      T.Expect (R.Path = "foo", "Path: Expected: 'foo', got: '" & R.Path & "'");
+      T.Expect (R.Params = "q=1#frag", "Params: Expected: 'q=1#frag', got: '" & R.Params & "'");
    end Test_Valid_Query_Fragment;
 
    procedure Test_Valid_UTF8_Encoded (T : in out Test_Context) is
       R : constant Requests.Request := Requests.Parse ("gemini://host/caf%C3%A9" & CRLF);
    begin
-      T.Expect (R.Host = "host", "Host: " & R.Host);
-      T.Expect (R.Path = "caf" & Character'Val (16#C3#) & Character'Val (16#A9#), "Path: " & R.Path);
-      T.Expect (R.Params = "", "Params: " & R.Params);
+      T.Expect (R.Host = "host", "Host: Expected: 'host', got: '" & R.Host & "'");
+      T.Expect (R.Path = "caf" & Character'Val (16#C3#) & Character'Val (16#A9#), "Path: Expected: 'caf\C3\A9', got: '" & R.Path & "'");
+      T.Expect (R.Params = "", "Params: Expected: '', got: '" & R.Params & "'");
    end Test_Valid_UTF8_Encoded;
 
    procedure Test_Valid_Encoded_Regular_Char (T : in out Test_Context) is
       R : constant Requests.Request := Requests.Parse ("gemini://host/%66oo" & CRLF);
    begin
-      T.Expect (R.Host = "host", "Host: " & R.Host);
-      T.Expect (R.Path = "foo", "Path: " & R.Path);
-      T.Expect (R.Params = "", "Params: " & R.Params);
+      T.Expect (R.Host = "host", "Host: Expected: 'host', got: '" & R.Host & "'");
+      T.Expect (R.Path = "foo", "Path: Expected: 'foo', got: '" & R.Path & "'");
+      T.Expect (R.Params = "", "Params: Expected: '', got: '" & R.Params & "'");
    end Test_Valid_Encoded_Regular_Char;
 
    procedure Test_Valid_Dotdot_Prefix (T : in out Test_Context) is
       R : constant Requests.Request := Requests.Parse ("gemini://host/..foo" & CRLF);
    begin
-      T.Expect (R.Host = "host", "Host: " & R.Host);
-      T.Expect (R.Path = "..foo", "Path: " & R.Path);
-      T.Expect (R.Params = "", "Params: " & R.Params);
+      T.Expect (R.Host = "host", "Host: Expected: 'host', got: '" & R.Host & "'");
+      T.Expect (R.Path = "..foo", "Path: Expected: '..foo', got: '" & R.Path & "'");
+      T.Expect (R.Params = "", "Params: Expected: '', got: '" & R.Params & "'");
    end Test_Valid_Dotdot_Prefix;
 
    procedure Test_Valid_Dotdot_Middle (T : in out Test_Context) is
       R : constant Requests.Request := Requests.Parse ("gemini://host/foo..bar" & CRLF);
    begin
-      T.Expect (R.Host = "host", "Host: " & R.Host);
-      T.Expect (R.Path = "foo..bar", "Path: " & R.Path);
-      T.Expect (R.Params = "", "Params: " & R.Params);
+      T.Expect (R.Host = "host", "Host: Expected: 'host', got: '" & R.Host & "'");
+      T.Expect (R.Path = "foo..bar", "Path: Expected: 'foo..bar', got: '" & R.Path & "'");
+      T.Expect (R.Params = "", "Params: Expected: '', got: '" & R.Params & "'");
    end Test_Valid_Dotdot_Middle;
 
    procedure Test_Valid_Dotdot_Suffix (T : in out Test_Context) is
       R : constant Requests.Request := Requests.Parse ("gemini://host/foo.." & CRLF);
    begin
-      T.Expect (R.Host = "host", "Host: " & R.Host);
-      T.Expect (R.Path = "foo..", "Path: " & R.Path);
-      T.Expect (R.Params = "", "Params: " & R.Params);
+      T.Expect (R.Host = "host", "Host: Expected: 'host', got: '" & R.Host & "'");
+      T.Expect (R.Path = "foo..", "Path: Expected: 'foo..', got: '" & R.Path & "'");
+      T.Expect (R.Params = "", "Params: Expected: '', got: '" & R.Params & "'");
    end Test_Valid_Dotdot_Suffix;
 
    procedure Test_Valid_Dotfile (T : in out Test_Context) is
       R : constant Requests.Request := Requests.Parse ("gemini://host/.hidden" & CRLF);
    begin
-      T.Expect (R.Host = "host", "Host: " & R.Host);
-      T.Expect (R.Path = ".hidden", "Path: " & R.Path);
-      T.Expect (R.Params = "", "Params: " & R.Params);
+      T.Expect (R.Host = "host", "Host: Expected: 'host', got: '" & R.Host & "'");
+      T.Expect (R.Path = ".hidden", "Path: Expected: '.hidden', got: '" & R.Path & "'");
+      T.Expect (R.Params = "", "Params: Expected: '', got: '" & R.Params & "'");
    end Test_Valid_Dotfile;
 
    procedure Test_Valid_Nested_Dotfile (T : in out Test_Context) is
       R : constant Requests.Request := Requests.Parse ("gemini://host/foo/.hidden" & CRLF);
    begin
-      T.Expect (R.Host = "host", "Host: " & R.Host);
-      T.Expect (R.Path = "foo/.hidden", "Path: " & R.Path);
-      T.Expect (R.Params = "", "Params: " & R.Params);
+      T.Expect (R.Host = "host", "Host: Expected: 'host', got: '" & R.Host & "'");
+      T.Expect (R.Path = "foo/.hidden", "Path: Expected: 'foo/.hidden', got: '" & R.Path & "'");
+      T.Expect (R.Params = "", "Params: Expected: '', got: '" & R.Params & "'");
    end Test_Valid_Nested_Dotfile;
 end Requests_Tests;
