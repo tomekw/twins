@@ -52,5 +52,13 @@ begin
    Test_Runner.Add ("Valid dotfile", Requests_Tests.Test_Valid_Dotfile'Access);
    Test_Runner.Add ("Valid nested dotfile", Requests_Tests.Test_Valid_Nested_Dotfile'Access);
 
+   Test_Runner.Add ("Content_Path for empty path", Requests_Tests.Test_Content_Path_Empty'Access);
+   Test_Runner.Add ("Content_Path for trailing slash", Requests_Tests.Test_Content_Path_Trailing_Slash'Access);
+   Test_Runner.Add ("Content_Path for no extension", Requests_Tests.Test_Content_Path_No_Extension'Access);
+   Test_Runner.Add ("Content_Path with extension", Requests_Tests.Test_Content_Path_With_Extension'Access);
+   Test_Runner.Add ("Content_Path nested with extension", Requests_Tests.Test_Content_Path_Nested_With_Extension'Access);
+   Test_Runner.Add ("Content_Path root level file", Requests_Tests.Test_Content_Path_Root_Level_File'Access);
+   Test_Runner.Add ("Content_Path nested no extension", Requests_Tests.Test_Content_Path_Nested_No_Extension'Access);
+
    Test_Runner.Run (Test_Reporter);
 end Tests_Main;

@@ -409,4 +409,45 @@ package body Requests_Tests is
       T.Expect (R.Path = "foo/.hidden", "Path: Expected: 'foo/.hidden', got: '" & R.Path & "'");
       T.Expect (R.Params = "", "Params: Expected: '', got: '" & R.Params & "'");
    end Test_Valid_Nested_Dotfile;
+   procedure Test_Content_Path_Empty (T : in out Test_Context) is
+      R : constant Requests.Request := Requests.Parse ("gemini://host" & CRLF);
+   begin
+      T.Expect (R.Content_Path = "index.gmi", "Expected: 'index.gmi', got: '" & R.Content_Path & "'");
+   end Test_Content_Path_Empty;
+
+   procedure Test_Content_Path_Trailing_Slash (T : in out Test_Context) is
+      R : constant Requests.Request := Requests.Parse ("gemini://host/foo/" & CRLF);
+   begin
+      T.Expect (R.Content_Path = "foo/index.gmi", "Expected: 'foo/index.gmi', got: '" & R.Content_Path & "'");
+   end Test_Content_Path_Trailing_Slash;
+
+   procedure Test_Content_Path_No_Extension (T : in out Test_Context) is
+      R : constant Requests.Request := Requests.Parse ("gemini://host/foo/bar" & CRLF);
+   begin
+      T.Expect (R.Content_Path = "foo/bar/index.gmi", "Expected: 'foo/bar/index.gmi', got: '" & R.Content_Path & "'");
+   end Test_Content_Path_No_Extension;
+
+   procedure Test_Content_Path_With_Extension (T : in out Test_Context) is
+      R : constant Requests.Request := Requests.Parse ("gemini://host/foo/bar.gmi" & CRLF);
+   begin
+      T.Expect (R.Content_Path = "foo/bar.gmi", "Expected: 'foo/bar.gmi', got: '" & R.Content_Path & "'");
+   end Test_Content_Path_With_Extension;
+
+   procedure Test_Content_Path_Nested_With_Extension (T : in out Test_Context) is
+      R : constant Requests.Request := Requests.Parse ("gemini://host/foo/bar/baz.txt" & CRLF);
+   begin
+      T.Expect (R.Content_Path = "foo/bar/baz.txt", "Expected: 'foo/bar/baz.txt', got: '" & R.Content_Path & "'");
+   end Test_Content_Path_Nested_With_Extension;
+
+   procedure Test_Content_Path_Root_Level_File (T : in out Test_Context) is
+      R : constant Requests.Request := Requests.Parse ("gemini://host/about.gmi" & CRLF);
+   begin
+      T.Expect (R.Content_Path = "about.gmi", "Expected: 'about.gmi', got: '" & R.Content_Path & "'");
+   end Test_Content_Path_Root_Level_File;
+
+   procedure Test_Content_Path_Nested_No_Extension (T : in out Test_Context) is
+      R : constant Requests.Request := Requests.Parse ("gemini://host/foo/bar/baz" & CRLF);
+   begin
+      T.Expect (R.Content_Path = "foo/bar/baz/index.gmi", "Expected: 'foo/bar/baz/index.gmi', got: '" & R.Content_Path & "'");
+   end Test_Content_Path_Nested_No_Extension;
 end Requests_Tests;

@@ -64,7 +64,7 @@ package body Twins.Workers is
                   exception
                      when E : Requests.Parse_Error =>
                         Log (Error, E.Exception_Message);
-                        Child_Ctx.Write (TLS.Streams.To_Elements ("59" & CRLF));
+                        Child_Ctx.Write (TLS.Streams.To_Elements ("59 Bad Request" & CRLF));
                   end;
 
                   Child_Ctx.Close;

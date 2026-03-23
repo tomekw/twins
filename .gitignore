@@ -2,3 +2,5 @@
 target/
 twins_deps.gpr
 twins_tests_deps.gpr
+
+/content

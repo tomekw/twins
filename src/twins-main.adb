@@ -7,7 +7,8 @@ procedure Twins.Main is
    Server_Acceptor : Acceptors.Acceptor;
 
    Worker_Cfg : constant Workers.Config := (Cert_File => String_Holders.To_Holder ("cert.pem"),
-                                            Key_File => String_Holders.To_Holder ("key.pem"));
+                                            Key_File => String_Holders.To_Holder ("key.pem"),
+                                            Content_Root => String_Holders.To_Holder ("content"));
    Workers_Count : constant Positive := 8;
    Workers_Pool : array (1 .. Workers_Count) of Workers.Worker;
 begin

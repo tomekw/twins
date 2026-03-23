@@ -11,6 +11,8 @@ package Twins.Requests is
 
    function Params (Self : Request) return String;
 
+   function Content_Path (Self : Request) return String;
+
 private
 
    type Request is record

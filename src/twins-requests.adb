@@ -1,3 +1,4 @@
+with Ada.Directories;
 with Ada.Strings.Fixed;
 with Ada.Strings.Unbounded;
 
@@ -102,4 +103,20 @@ package body Twins.Requests is
    begin
       return Self.Params.Element;
    end Params;
+
+   function Content_Path (Self : Request) return String is
+      Path : constant String := Self.Path.Element;
+   begin
+      if Path'Length = 0 then
+         return "index.gmi";
+      elsif Directories.Extension (Path)'Length = 0 then
+         if Path (Path'Last) = '/' then
+            return Path & "index.gmi";
+         else
+            return Path & "/index.gmi";
+         end if;
+      else
+         return Path;
+      end if;
+   end Content_Path;
 end Twins.Requests;

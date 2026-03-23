@@ -44,4 +44,11 @@ package Requests_Tests is
    procedure Test_Valid_Dotdot_Suffix (T : in out Test_Context);
    procedure Test_Valid_Dotfile (T : in out Test_Context);
    procedure Test_Valid_Nested_Dotfile (T : in out Test_Context);
+   procedure Test_Content_Path_Empty (T : in out Test_Context);
+   procedure Test_Content_Path_Trailing_Slash (T : in out Test_Context);
+   procedure Test_Content_Path_No_Extension (T : in out Test_Context);
+   procedure Test_Content_Path_With_Extension (T : in out Test_Context);
+   procedure Test_Content_Path_Nested_With_Extension (T : in out Test_Context);
+   procedure Test_Content_Path_Root_Level_File (T : in out Test_Context);
+   procedure Test_Content_Path_Nested_No_Extension (T : in out Test_Context);
 end Requests_Tests;
