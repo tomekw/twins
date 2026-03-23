@@ -28,6 +28,17 @@ package body Twins.Workers is
        Hash => Strings.Hash_Case_Insensitive,
        Equivalent_Keys => Strings.Equal_Case_Insensitive);
 
+   Extension_To_Mime_Types : constant Extension_To_Mime_Type_Maps.Map :=
+      ["gmi" => "text/gemini",
+       "txt" => "text/plain",
+       "md" => "text/markdown",
+       "png" => "image/png",
+       "jpg" => "image/jpeg",
+       "jpeg" => "image/jpeg",
+       "gif" => "image/gif"];
+
+   CRLF : constant String := [ASCII.CR, ASCII.LF];
+
    task body Worker is
       use type Sockets.Socket_Type;
 
@@ -42,8 +53,6 @@ package body Twins.Workers is
          Shutdown_Handlers.Shutdown_Handler.Wait;
       then abort
          declare
-            CRLF : constant String := [ASCII.CR, ASCII.LF];
-
             Cfg : constant TLS.Configs.Config := TLS.Configs.Init (Worker_Cfg.Cert_File.Element, Worker_Cfg.Key_File.Element);
             Ctx : TLS.Contexts.Servers.Server_Context := TLS.Contexts.Servers.Init (Cfg);
 
@@ -72,23 +81,28 @@ package body Twins.Workers is
 
                      declare
                         Content_Full_Path : constant String := Worker_Cfg.Content_Root.Element & "/" & Request.Content_Path;
+                        Extension : constant String := Directories.Extension (Request.Content_Path);
                      begin
-                        if not Directories.Exists (Content_Full_Path) then
+                        if not Directories.Exists (Content_Full_Path) or else
+                           not Extension_To_Mime_Types.Contains (Extension)
+                        then
                            Child_Ctx.Write (TLS.Streams.To_Elements ("51 Not Found" & CRLF));
                         else
                            declare
                               File : Streams.Stream_IO.File_Type;
                               Transfer_Buffer : Streams.Stream_Element_Array (1 .. 8192);
-                              Transfer_Offset : Streams.Stream_Element_Offset;
+                              Transfer_Last : Streams.Stream_Element_Offset;
+
+                              Mime_Type : constant String := Extension_To_Mime_Types.Element (Extension);
                            begin
                               Streams.Stream_IO.Open (File, Streams.Stream_IO.In_File, Content_Full_Path);
 
-                              Child_Ctx.Write (TLS.Streams.To_Elements ("20 text/gemini" & CRLF));
+                              Child_Ctx.Write (TLS.Streams.To_Elements ("20 " & Mime_Type & CRLF));
 
                               loop
-                                 Streams.Stream_IO.Read (File, Transfer_Buffer, Transfer_Offset);
-                                 exit when Transfer_Offset < Transfer_Buffer'First;
-                                 Child_Ctx.Write (Transfer_Buffer (Transfer_Buffer'First .. Transfer_Offset));
+                                 Streams.Stream_IO.Read (File, Transfer_Buffer, Transfer_Last);
+                                 exit when Transfer_Last < Transfer_Buffer'First;
+                                 Child_Ctx.Write (Transfer_Buffer (Transfer_Buffer'First .. Transfer_Last));
                               end loop;
 
                               Streams.Stream_IO.Close (File);
@@ -106,6 +120,8 @@ package body Twins.Workers is
                   Client_Socket := Sockets.No_Socket;
                exception
                   when Streams.Stream_IO.Name_Error | Streams.Stream_IO.Use_Error =>
+                     Log (Error, "Uanble to open file");
+
                      begin
                         Child_Ctx.Write (TLS.Streams.To_Elements ("40 Temporary Failure" & CRLF));
                         Child_Ctx.Close;
