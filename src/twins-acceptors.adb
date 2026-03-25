@@ -27,7 +27,8 @@ package body Twins.Acceptors is
          Shutdown_Handlers.Shutdown_Handler.Wait;
       then abort
          declare
-            Bind_Address : constant Sockets.Inet_Addr_Type := Sockets.Any_Inet_Addr;
+            Host : constant Sockets.Host_Entry_Type := Sockets.Get_Host_By_Name (Acceptor_Cfg.Host.Element);
+            Bind_Address : constant Sockets.Inet_Addr_Type := Sockets.Addresses (Host);
             Address : Sockets.Sock_Addr_Type := (Family => Sockets.Family_Inet,
                                                  Addr => Bind_Address,
                                                  Port => Acceptor_Cfg.Server_Port);
@@ -38,7 +39,7 @@ package body Twins.Acceptors is
             Sockets.Listen_Socket (Server_Socket);
 
             Log (Info, "Twins, a Gemini server");
-            Log (Info, "Listening on " & Sockets.Image (Bind_Address) & ":" & Image (Acceptor_Cfg.Server_Port));
+            Log (Info, "Listening on " & Acceptor_Cfg.Host.Element & ":" & Image (Acceptor_Cfg.Server_Port));
 
             loop
                Sockets.Accept_Socket (Server_Socket, Client_Socket, Address);

@@ -3,7 +3,8 @@ with Twins.Shutdown_Handlers;
 with Twins.Workers;
 
 procedure Twins.Main is
-   Acceptor_Cfg : constant Acceptors.Config := (Server_Port => 1965);
+   Acceptor_Cfg : constant Acceptors.Config := (Host => String_Holders.To_Holder ("localhost"),
+                                                Server_Port => 1965);
    Server_Acceptor : Acceptors.Acceptor;
 
    Worker_Cfg : constant Workers.Config := (Cert_File => String_Holders.To_Holder ("cert.pem"),

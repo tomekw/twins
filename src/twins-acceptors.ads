@@ -4,6 +4,7 @@ package Twins.Acceptors is
    use GNAT;
 
    type Config is record
+      Host : String_Holders.Holder;
       Server_Port : Sockets.Port_Type;
    end record;
 
