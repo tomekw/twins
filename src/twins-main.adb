@@ -3,13 +3,15 @@ with Twins.Shutdown_Handlers;
 with Twins.Workers;
 
 procedure Twins.Main is
-   Acceptor_Cfg : constant Acceptors.Config := (Host => String_Holders.To_Holder ("localhost"),
+   Hostname : constant String := "localhost";
+   Acceptor_Cfg : constant Acceptors.Config := (Hostname => String_Holders.To_Holder (Hostname),
                                                 Server_Port => 1965);
    Server_Acceptor : Acceptors.Acceptor;
 
    Worker_Cfg : constant Workers.Config := (Cert_File => String_Holders.To_Holder ("cert.pem"),
                                             Key_File => String_Holders.To_Holder ("key.pem"),
-                                            Content_Root => String_Holders.To_Holder ("content"));
+                                            Content_Root => String_Holders.To_Holder ("content"),
+                                            Hostname => String_Holders.To_Holder (Hostname));
    Workers_Count : constant Positive := 8;
    Workers_Pool : array (1 .. Workers_Count) of Workers.Worker;
 begin

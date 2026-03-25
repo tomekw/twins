@@ -3,6 +3,7 @@ package Twins.Workers is
       Cert_File : String_Holders.Holder;
       Key_File : String_Holders.Holder;
       Content_Root : String_Holders.Holder;
+      Hostname : String_Holders.Holder;
    end record;
 
    task type Worker is

@@ -60,6 +60,13 @@ package body Twins.Workers is
 
             Buffer : Streams.Stream_Element_Array (1 .. 1024);
             Last : Streams.Stream_Element_Offset;
+
+            procedure Close_Sockets is
+            begin
+               Child_Ctx.Close;
+               Sockets.Close_Socket (Client_Socket);
+               Client_Socket := Sockets.No_Socket;
+            end Close_Sockets;
          begin
             loop
                declare
@@ -72,72 +79,90 @@ package body Twins.Workers is
                   Child_Ctx.Read (Buffer, Last);
 
                   declare
+                     Client_IP : constant String := Sockets.Image (Sockets.Get_Peer_Name (Client_Socket).Addr);
                      Request_Line : constant String := TLS.Streams.To_String (Buffer (Buffer'First .. Last));
                      Request : Requests.Request;
                   begin
                      Request := Requests.Parse (Request_Line);
 
-                     Log (Info, Request.Content_Path);
+                     if not Strings.Equal_Case_Insensitive (Request.Host, Worker_Cfg.Hostname.Element) then
+                        declare
+                           Response : constant String := "53 Proxy Request Refused";
+                        begin
+                           Log_Request (Error, Request => Request, Client_IP => Client_IP, Status => Response);
+                           Child_Ctx.Write (TLS.Streams.To_Elements (Response & CRLF));
+                        end;
+                     else
+                        declare
+                           Content_Full_Path : constant String := Worker_Cfg.Content_Root.Element & "/" & Request.Content_Path;
+                           Extension : constant String := Directories.Extension (Request.Content_Path);
+                        begin
+                           if not Directories.Exists (Content_Full_Path) or else
+                              not Extension_To_Mime_Types.Contains (Extension)
+                           then
+                              declare
+                                 Response : constant String := "51 Not Found";
+                              begin
+                                 Log_Request (Info, Request => Request, Client_IP => Client_IP, Status => Response);
+                                 Child_Ctx.Write (TLS.Streams.To_Elements (Response & CRLF));
+                              end;
+                           else
+                              declare
+                                 File : Streams.Stream_IO.File_Type;
+                                 Transfer_Buffer : Streams.Stream_Element_Array (1 .. 8192);
+                                 Transfer_Last : Streams.Stream_Element_Offset;
 
-                     declare
-                        Content_Full_Path : constant String := Worker_Cfg.Content_Root.Element & "/" & Request.Content_Path;
-                        Extension : constant String := Directories.Extension (Request.Content_Path);
-                     begin
-                        if not Directories.Exists (Content_Full_Path) or else
-                           not Extension_To_Mime_Types.Contains (Extension)
-                        then
-                           Child_Ctx.Write (TLS.Streams.To_Elements ("51 Not Found" & CRLF));
-                        else
-                           declare
-                              File : Streams.Stream_IO.File_Type;
-                              Transfer_Buffer : Streams.Stream_Element_Array (1 .. 8192);
-                              Transfer_Last : Streams.Stream_Element_Offset;
+                                 Mime_Type : constant String := Extension_To_Mime_Types.Element (Extension);
+                              begin
+                                 Streams.Stream_IO.Open (File, Streams.Stream_IO.In_File, Content_Full_Path);
 
-                              Mime_Type : constant String := Extension_To_Mime_Types.Element (Extension);
-                           begin
-                              Streams.Stream_IO.Open (File, Streams.Stream_IO.In_File, Content_Full_Path);
+                                 declare
+                                    Response : constant String := "20 " & Mime_Type;
+                                 begin
+                                    Log_Request (Info, Request => Request, Client_IP => Client_IP, Status => Response);
+                                    Child_Ctx.Write (TLS.Streams.To_Elements (Response & CRLF));
+                                 end;
 
-                              Child_Ctx.Write (TLS.Streams.To_Elements ("20 " & Mime_Type & CRLF));
+                                 loop
+                                    Streams.Stream_IO.Read (File, Transfer_Buffer, Transfer_Last);
+                                    exit when Transfer_Last < Transfer_Buffer'First;
+                                    Child_Ctx.Write (Transfer_Buffer (Transfer_Buffer'First .. Transfer_Last));
+                                 end loop;
 
-                              loop
-                                 Streams.Stream_IO.Read (File, Transfer_Buffer, Transfer_Last);
-                                 exit when Transfer_Last < Transfer_Buffer'First;
-                                 Child_Ctx.Write (Transfer_Buffer (Transfer_Buffer'First .. Transfer_Last));
-                              end loop;
-
-                              Streams.Stream_IO.Close (File);
-                           end;
-                        end if;
-                     end;
+                                 Streams.Stream_IO.Close (File);
+                              end;
+                           end if;
+                        end;
+                     end if;
                   exception
                      when E : Requests.Parse_Error =>
-                        Log (Error, E.Exception_Message);
-                        Child_Ctx.Write (TLS.Streams.To_Elements ("59 Bad Request" & CRLF));
+                        declare
+                           Response : constant String := "59 Bad Request";
+                        begin
+                           Log (Error, Client_IP & " " & Response & " " & E.Exception_Message);
+                           Child_Ctx.Write (TLS.Streams.To_Elements (Response & CRLF));
+                        end;
+                     when Streams.Stream_IO.Name_Error | Streams.Stream_IO.Use_Error =>
+                        begin
+                           declare
+                              Response : constant String := "40 Temporary Failure";
+                           begin
+                              Log (Error, Client_IP & " " & Response & " " & "Unable to open file");
+                              Child_Ctx.Write (TLS.Streams.To_Elements (Response & CRLF));
+                           end;
+                        exception
+                           when Cleanup_E : others =>
+                              Log (Error, Cleanup_E.Exception_Message);
+                        end;
                   end;
 
-                  Child_Ctx.Close;
-                  Sockets.Close_Socket (Client_Socket);
-                  Client_Socket := Sockets.No_Socket;
+                  Close_Sockets;
                exception
-                  when Streams.Stream_IO.Name_Error | Streams.Stream_IO.Use_Error =>
-                     Log (Error, "Unable to open file");
-
-                     begin
-                        Child_Ctx.Write (TLS.Streams.To_Elements ("40 Temporary Failure" & CRLF));
-                        Child_Ctx.Close;
-                        Sockets.Close_Socket (Client_Socket);
-                        Client_Socket := Sockets.No_Socket;
-                     exception
-                        when Cleanup_E : others =>
-                           Log (Error, Cleanup_E.Exception_Message);
-                     end;
                   when E : others =>
                      Log (Error, E.Exception_Message);
 
                      begin
-                        Child_Ctx.Close;
-                        Sockets.Close_Socket (Client_Socket);
-                        Client_Socket := Sockets.No_Socket;
+                        Close_Sockets;
                      exception
                         when Cleanup_E : others =>
                            Log (Error, Cleanup_E.Exception_Message);
