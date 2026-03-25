@@ -1,0 +1,11 @@
+[Unit]
+Description=Twins Gemini server
+After=network.target
+
+[Service]
+ExecStart=~/bin/twins
+Type=simple
+Restart=always
+
+[Install]
+WantedBy=default.target
