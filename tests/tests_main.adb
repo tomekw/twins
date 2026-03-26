@@ -61,6 +61,7 @@ begin
    Test_Runner.Add ("Content_Path root level file", Requests_Tests.Test_Content_Path_Root_Level_File'Access);
    Test_Runner.Add ("Content_Path nested no extension", Requests_Tests.Test_Content_Path_Nested_No_Extension'Access);
 
+   Test_Runner.Add ("No options return default Config", Configs_Tests.Test_Default_Options'Access);
    Test_Runner.Add ("Valid arguments return Config", Configs_Tests.Test_Valid_Arguments'Access);
 
    Test_Runner.Run (Test_Reporter);
