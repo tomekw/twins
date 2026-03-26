@@ -21,7 +21,15 @@ cp target/release/bin/twins ~/bin/twins
 ## Usage
 
 ``` shell
-twins --hostname example.com --port 1965 --content-root /var/gemini --cert-file /etc/ssl/certs/cert.pem --key-file /etc/ssl/certs/key.pem
+Usage: twins [options]
+
+Options:
+    -H  hostname             default: localhost
+    -p  port                 default: 1965
+    -r  content root         default: "content" in the current directory
+    -c  certificate file     default: "cert.pem" in the current directory
+    -k  certificate key      default: "key.pem" in the current directory
+    -h  print this message
 ```
 
 or use an example systemd `twins.service` at `resources/systemd`.
