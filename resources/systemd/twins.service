@@ -3,7 +3,7 @@ Description=Twins Gemini server
 After=network.target
 
 [Service]
-ExecStart=~/bin/twins
+ExecStart=/usr/bin/twins
 Type=simple
 Restart=always
 

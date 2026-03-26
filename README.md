@@ -21,7 +21,7 @@ cp target/release/bin/twins ~/bin/twins
 ## Usage
 
 ``` shell
-twins
+twins --hostname example.com --port 1965 --content-root /var/gemini --cert-file /etc/ssl/certs/cert.pem --key-file /etc/ssl/certs/key.pem
 ```
 
 or use an example systemd `twins.service` at `resources/systemd`.

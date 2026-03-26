@@ -2,6 +2,7 @@ with Testy.Runners;
 with Testy.Reporters.Text;
 
 with Requests_Tests;
+with Configs_Tests;
 
 procedure Tests_Main is
    use Testy;
@@ -59,6 +60,8 @@ begin
    Test_Runner.Add ("Content_Path nested with extension", Requests_Tests.Test_Content_Path_Nested_With_Extension'Access);
    Test_Runner.Add ("Content_Path root level file", Requests_Tests.Test_Content_Path_Root_Level_File'Access);
    Test_Runner.Add ("Content_Path nested no extension", Requests_Tests.Test_Content_Path_Nested_No_Extension'Access);
+
+   Test_Runner.Add ("Valid arguments return Config", Configs_Tests.Test_Valid_Arguments'Access);
 
    Test_Runner.Run (Test_Reporter);
 end Tests_Main;
