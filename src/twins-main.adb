@@ -27,9 +27,7 @@ procedure Twins.Main is
 
    Cfg : Configs.Config;
 begin
-   if Arguments_Count = 1 and then
-      Arguments (1) = "-h"
-   then
+   if Arguments_Count = 1 then
       Print_Help;
       return;
    end if;
