@@ -1,12 +1,7 @@
-package Twins.Workers is
-   type Config is record
-      Cert_File : String_Holders.Holder;
-      Key_File : String_Holders.Holder;
-      Content_Root : String_Holders.Holder;
-      Hostname : String_Holders.Holder;
-   end record;
+with Twins.Configs;
 
+package Twins.Workers is
    task type Worker is
-      entry Init (Cfg : Config);
+      entry Init (Cfg : Configs.Config);
    end Worker;
 end Twins.Workers;

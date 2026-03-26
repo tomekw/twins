@@ -42,10 +42,10 @@ package body Twins.Workers is
    task body Worker is
       use type Sockets.Socket_Type;
 
-      Worker_Cfg : Config;
+      Worker_Cfg : Configs.Config;
       Client_Socket : Sockets.Socket_Type := Sockets.No_Socket;
    begin
-      accept Init (Cfg : Config) do
+      accept Init (Cfg : Configs.Config) do
          Worker_Cfg := Cfg;
       end Init;
 
@@ -53,7 +53,7 @@ package body Twins.Workers is
          Shutdown_Handlers.Shutdown_Handler.Wait;
       then abort
          declare
-            Cfg : constant TLS.Configs.Config := TLS.Configs.Init (Worker_Cfg.Cert_File.Element, Worker_Cfg.Key_File.Element);
+            Cfg : constant TLS.Configs.Config := TLS.Configs.Init (Worker_Cfg.Cert_File, Worker_Cfg.Key_File);
             Ctx : TLS.Contexts.Servers.Server_Context := TLS.Contexts.Servers.Init (Cfg);
 
             Child_Ctx : TLS.Contexts.Context;
@@ -85,7 +85,7 @@ package body Twins.Workers is
                   begin
                      Request := Requests.Parse (Request_Line);
 
-                     if not Strings.Equal_Case_Insensitive (Request.Host, Worker_Cfg.Hostname.Element) then
+                     if not Strings.Equal_Case_Insensitive (Request.Host, Worker_Cfg.Hostname) then
                         declare
                            Response : constant String := "53 Proxy Request Refused";
                         begin
@@ -94,7 +94,7 @@ package body Twins.Workers is
                         end;
                      else
                         declare
-                           Content_Full_Path : constant String := Worker_Cfg.Content_Root.Element & "/" & Request.Content_Path;
+                           Content_Full_Path : constant String := Worker_Cfg.Content_Root & "/" & Request.Content_Path;
                            Extension : constant String := Directories.Extension (Request.Content_Path);
                         begin
                            if not Directories.Exists (Content_Full_Path) or else

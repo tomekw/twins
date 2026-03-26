@@ -1,11 +1,14 @@
 with Ada.Strings;
 with Ada.Strings.Fixed;
 
+with GNAT.Sockets;
+
 with Twins.Loggers;
 with Twins.Shutdown_Handlers;
 with Twins.Socket_Queues;
 
 package body Twins.Acceptors is
+   use GNAT;
    use Twins.Loggers;
 
    function Image (Port : Sockets.Port_Type) return String is
@@ -16,10 +19,10 @@ package body Twins.Acceptors is
    task body Acceptor is
       use type Sockets.Socket_Type;
 
-      Acceptor_Cfg : Config;
+      Acceptor_Cfg : Configs.Config;
       Server_Socket : Sockets.Socket_Type := Sockets.No_Socket;
    begin
-      accept Init (Cfg : Config) do
+      accept Init (Cfg : Configs.Config) do
          Acceptor_Cfg := Cfg;
       end Init;
 
@@ -27,11 +30,11 @@ package body Twins.Acceptors is
          Shutdown_Handlers.Shutdown_Handler.Wait;
       then abort
          declare
-            Host : constant Sockets.Host_Entry_Type := Sockets.Get_Host_By_Name (Acceptor_Cfg.Hostname.Element);
+            Host : constant Sockets.Host_Entry_Type := Sockets.Get_Host_By_Name (Acceptor_Cfg.Hostname);
             Bind_Address : constant Sockets.Inet_Addr_Type := Sockets.Addresses (Host);
             Address : Sockets.Sock_Addr_Type := (Family => Sockets.Family_Inet,
                                                  Addr => Bind_Address,
-                                                 Port => Acceptor_Cfg.Server_Port);
+                                                 Port => Acceptor_Cfg.Port);
             Client_Socket : Sockets.Socket_Type;
          begin
             Sockets.Create_Socket (Server_Socket);
@@ -39,7 +42,7 @@ package body Twins.Acceptors is
             Sockets.Listen_Socket (Server_Socket);
 
             Log (Info, "Twins, a Gemini server");
-            Log (Info, "Listening on " & Acceptor_Cfg.Hostname.Element & ":" & Image (Acceptor_Cfg.Server_Port));
+            Log (Info, "Listening on " & Acceptor_Cfg.Hostname & ":" & Image (Acceptor_Cfg.Port));
 
             loop
                Sockets.Accept_Socket (Server_Socket, Client_Socket, Address);

@@ -24,11 +24,10 @@ package Twins.Configs is
 private
 
    type Config is record
-      Hostname : String_Holders.Holder;
-      Port : Sockets.Port_Type;
-      Content_Root : String_Holders.Holder;
-      Cert_File : String_Holders.Holder;
-      Key_File : String_Holders.Holder;
+      Hostname : String_Holders.Holder := String_Holders.To_Holder ("localhost");
+      Port : Sockets.Port_Type := 1965;
+      Content_Root : String_Holders.Holder := String_Holders.To_Holder ("content");
+      Cert_File : String_Holders.Holder := String_Holders.To_Holder ("cert.pem");
+      Key_File : String_Holders.Holder := String_Holders.To_Holder ("key.pem");
    end record;
-
 end Twins.Configs;
