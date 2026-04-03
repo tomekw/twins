@@ -1,15 +1,15 @@
-with Ada.Containers.Indefinite_Hashed_Maps;
 with Ada.Directories;
 with Ada.Streams;
-with Ada.Streams.Stream_IO;
 with Ada.Strings.Equal_Case_Insensitive;
-with Ada.Strings.Hash_Case_Insensitive;
+with Ada.Streams.Stream_IO;
 with GNAT.Sockets;
 
 with Padlock.Configs;
 with Padlock.Contexts;
 with Padlock.Contexts.Servers;
 with Padlock.Streams;
+
+with Tackle.MIME;
 
 with Twins.Loggers;
 with Twins.Requests;
@@ -18,24 +18,10 @@ with Twins.Socket_Queues;
 
 package body Twins.Workers is
    use GNAT;
+   use Tackle;
    use Twins.Loggers;
 
    package TLS renames Padlock;
-
-   package Extension_To_Mime_Type_Maps is new Containers.Indefinite_Hashed_Maps
-      (Key_Type => String,
-       Element_Type => String,
-       Hash => Strings.Hash_Case_Insensitive,
-       Equivalent_Keys => Strings.Equal_Case_Insensitive);
-
-   Extension_To_Mime_Types : constant Extension_To_Mime_Type_Maps.Map :=
-      ["gmi" => "text/gemini",
-       "txt" => "text/plain",
-       "md" => "text/markdown",
-       "png" => "image/png",
-       "jpg" => "image/jpeg",
-       "jpeg" => "image/jpeg",
-       "gif" => "image/gif"];
 
    CRLF : constant String := [ASCII.CR, ASCII.LF];
 
@@ -60,6 +46,8 @@ package body Twins.Workers is
 
             Buffer : Streams.Stream_Element_Array (1 .. 1024);
             Last : Streams.Stream_Element_Offset;
+
+            Mime_DB : constant MIME.Database := MIME.Init;
 
             procedure Close_Sockets is
             begin
@@ -95,11 +83,8 @@ package body Twins.Workers is
                      else
                         declare
                            Content_Full_Path : constant String := Worker_Cfg.Content_Root & "/" & Request.Content_Path;
-                           Extension : constant String := Directories.Extension (Request.Content_Path);
                         begin
-                           if not Directories.Exists (Content_Full_Path) or else
-                              not Extension_To_Mime_Types.Contains (Extension)
-                           then
+                           if not Directories.Exists (Content_Full_Path) then
                               declare
                                  Response : constant String := "51 Not Found";
                               begin
@@ -112,7 +97,8 @@ package body Twins.Workers is
                                  Transfer_Buffer : Streams.Stream_Element_Array (1 .. 8192);
                                  Transfer_Last : Streams.Stream_Element_Offset;
 
-                                 Mime_Type : constant String := Extension_To_Mime_Types.Element (Extension);
+                                 Extension : constant String := Directories.Extension (Request.Content_Path);
+                                 Mime_Type : constant String := Mime_DB.Mime_Type (Extension, "text/plain");
                               begin
                                  Streams.Stream_IO.Open (File, Streams.Stream_IO.In_File, Content_Full_Path);
 
