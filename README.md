@@ -34,17 +34,9 @@ Options:
 
 or use an example systemd `twins.service` at `resources/systemd`.
 
-Twins is simple. It only supports static files and these extensions:
+## Roadmap
 
-* `gif`
-* `gmi`
-* `jpeg`
-* `jpg`
-* `md`
-* `png`
-* `txt`
-
-but this may change in the future.
+* [ ] implement config options validation. Just don't make mistakes, okay?
 
 ## Disclaimer
 
