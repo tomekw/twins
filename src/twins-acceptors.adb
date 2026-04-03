@@ -38,10 +38,16 @@ package body Twins.Acceptors is
             Client_Socket : Sockets.Socket_Type;
          begin
             Sockets.Create_Socket (Server_Socket);
+            Sockets.Set_Socket_Option
+               (Socket => Server_Socket,
+                Level => Sockets.Socket_Level,
+                Option => (Name => Sockets.Reuse_Address,
+                           Enabled => True));
+
             Sockets.Bind_Socket (Server_Socket, Address);
             Sockets.Listen_Socket (Server_Socket);
 
-            Log (Info, "Twins, a Gemini server");
+            Log (Info, "twins " & Version);
             Log (Info, "Listening on " & Acceptor_Cfg.Hostname & ":" & Image (Acceptor_Cfg.Port));
 
             loop
