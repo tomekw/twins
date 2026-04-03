@@ -27,7 +27,7 @@ package body Requests_Tests is
    procedure Too_Long_Request is
       Unused_Request : Requests.Request;
    begin
-      Unused_Request := Requests.Parse ("gemini://" & [1 .. 1014 => 'a'] & CRLF);
+      Unused_Request := Requests.Parse ("gemini://" & [1 .. 1016 => 'a'] & CRLF);
    end Too_Long_Request;
 
    procedure Test_Too_Long_Request (T : in out Test_Context) is

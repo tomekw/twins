@@ -44,7 +44,7 @@ package body Twins.Workers is
 
             Child_Ctx : TLS.Contexts.Context;
 
-            Buffer : Streams.Stream_Element_Array (1 .. 1024);
+            Buffer : Streams.Stream_Element_Array (1 .. 1026);
             Last : Streams.Stream_Element_Offset;
 
             Mime_DB : constant MIME.Database := MIME.Init;

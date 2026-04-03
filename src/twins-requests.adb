@@ -36,7 +36,7 @@ package body Twins.Requests is
       CRLF : constant String := [ASCII.CR, ASCII.LF];
       Scheme : constant String := "gemini://";
    begin
-      if Request_Line'Length > 1024 then
+      if Request_Line'Length > 1026 then
          raise Parse_Error with "request too long";
       end if;
 
