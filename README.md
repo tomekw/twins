@@ -10,8 +10,23 @@ Tested on Linux x86_64, MacOS ARM and Windows x86_64.
 
 ## Installation
 
-Download a binary from [releases](https://github.com/tomekw/twins/releases)
-or build from source with [tada](https://github.com/tomekw/tada).
+See [Releases](https://github.com/tomekw/twins/releases).
+
+```bash
+curl -L https://github.com/tomekw/twins/releases/download/VERSION/twins-VERSION-PLATFORM -o twins && chmod +x twins
+```
+
+Copy it somewhere on your `PATH`:
+
+```bash
+cp twins ~/bin/twins
+```
+
+## Building from source
+
+Install [tada](https://github.com/tomekw/tada).
+
+Run:
 
 ``` shell
 tada build --profile release
