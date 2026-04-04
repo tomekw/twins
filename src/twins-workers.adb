@@ -25,6 +25,11 @@ package body Twins.Workers is
 
    CRLF : constant String := [ASCII.CR, ASCII.LF];
 
+   function Request_Log_Line (Content_Path : String; Client_IP : String; Status : String) return String is
+   begin
+      return Content_Path & " " & Client_IP & " " & Status;
+   end Request_Log_Line;
+
    task body Worker is
       use type Sockets.Socket_Type;
 
@@ -77,7 +82,7 @@ package body Twins.Workers is
                         declare
                            Response : constant String := "53 Proxy Request Refused";
                         begin
-                           Log_Request (Error, Request => Request, Client_IP => Client_IP, Status => Response);
+                           Log (Error, Request_Log_Line (Request.Content_Path, Client_IP, Response));
                            Child_Ctx.Write (TLS.Streams.To_Elements (Response & CRLF));
                         end;
                      else
@@ -88,7 +93,7 @@ package body Twins.Workers is
                               declare
                                  Response : constant String := "51 Not Found";
                               begin
-                                 Log_Request (Info, Request => Request, Client_IP => Client_IP, Status => Response);
+                                 Log (Info, Request_Log_Line (Request.Content_Path, Client_IP, Response));
                                  Child_Ctx.Write (TLS.Streams.To_Elements (Response & CRLF));
                               end;
                            else
@@ -105,7 +110,7 @@ package body Twins.Workers is
                                  declare
                                     Response : constant String := "20 " & Mime_Type;
                                  begin
-                                    Log_Request (Info, Request => Request, Client_IP => Client_IP, Status => Response);
+                                    Log (Info, Request_Log_Line (Request.Content_Path, Client_IP, Response));
                                     Child_Ctx.Write (TLS.Streams.To_Elements (Response & CRLF));
                                  end;
 
