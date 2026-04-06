@@ -1,5 +1,7 @@
 ## unreleased
 
+* move logger to a separate task backed up by an internal queue
+
 ## 0.2.0
 
 * fix: maximum request length is 1024 bytes without, not with, CRLF

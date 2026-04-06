@@ -8,8 +8,7 @@ package Twins.Socket_Queues is
 
    package Bounded_Socket_Queues is new Containers.Bounded_Synchronized_Queues
       (Queue_Interfaces => Socket_Queue_Interfaces,
-       Default_Capacity => 64,
-       Default_Ceiling => 0);
+       Default_Capacity => 64);
 
    Socket_Queue : Bounded_Socket_Queues.Queue;
 end Twins.Socket_Queues;

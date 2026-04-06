@@ -3,6 +3,7 @@ with Ada.Text_IO;
 with Twins.Acceptors;
 with Twins.CL_Arguments;
 with Twins.Configs;
+with Twins.Loggers;
 with Twins.Shutdown_Handlers;
 with Twins.Workers;
 
@@ -47,5 +48,7 @@ begin
       end loop;
 
       Shutdown_Handlers.Shutdown_Handler.Wait;
+
+      Loggers.Shutdown;
    end;
 end Twins.Main;
