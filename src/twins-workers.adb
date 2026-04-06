@@ -121,6 +121,13 @@ package body Twins.Workers is
                                  end loop;
 
                                  Streams.Stream_IO.Close (File);
+                              exception
+                                 when others =>
+                                    if Streams.Stream_IO.Is_Open (File) then
+                                       Streams.Stream_IO.Close (File);
+                                    end if;
+
+                                    raise;
                               end;
                            end if;
                         end;
