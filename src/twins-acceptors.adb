@@ -1,6 +1,3 @@
-with Ada.Strings;
-with Ada.Strings.Fixed;
-
 with GNAT.Sockets;
 
 with Twins.Loggers;
@@ -8,13 +5,7 @@ with Twins.Shutdown_Handlers;
 with Twins.Socket_Queues;
 
 package body Twins.Acceptors is
-   use GNAT;
    use Twins.Loggers;
-
-   function Image (Port : Sockets.Port_Type) return String is
-   begin
-      return Strings.Fixed.Trim (Port'Image, Strings.Left);
-   end Image;
 
    task body Acceptor is
       use type Sockets.Socket_Type;

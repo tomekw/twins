@@ -17,7 +17,6 @@ with Twins.Shutdown_Handlers;
 with Twins.Socket_Queues;
 
 package body Twins.Workers is
-   use GNAT;
    use Tackle;
    use Twins.Loggers;
 
@@ -78,7 +77,9 @@ package body Twins.Workers is
                   begin
                      Request := Requests.Parse (Request_Line);
 
-                     if not Strings.Equal_Case_Insensitive (Request.Host, Worker_Cfg.Hostname) then
+                     if not Strings.Equal_Case_Insensitive (Request.Host, Worker_Cfg.Hostname) and then
+                        not Strings.Equal_Case_Insensitive (Request.Host, Worker_Cfg.Hostname & ":" & Image (Worker_Cfg.Port))
+                     then
                         declare
                            Response : constant String := "53 Proxy Request Refused";
                         begin

@@ -3,8 +3,6 @@ with GNAT.Sockets;
 with Twins.CL_Arguments;
 
 package Twins.Configs is
-   use GNAT;
-
    Config_Error : exception;
 
    type Config is private;
