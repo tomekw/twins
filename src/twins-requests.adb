@@ -1,3 +1,4 @@
+with Ada.Characters.Handling;
 with Ada.Directories;
 with Ada.Strings.Fixed;
 with Ada.Strings.Unbounded;
@@ -33,16 +34,35 @@ package body Twins.Requests is
    end Percent_Decode;
 
    function Parse (Request_Line : String) return Request is
+      use Ada.Characters.Handling;
+
       CRLF : constant String := [ASCII.CR, ASCII.LF];
-      Scheme : constant String := "gemini://";
+
+      Scheme_Delimiter : constant String := "://";
+      Gemini : constant String := "gemini";
+      Scheme : constant String := Gemini & Scheme_Delimiter;
    begin
       if Request_Line'Length > 1026 then
          raise Parse_Error with "request too long";
       end if;
 
-      if Strings.Fixed.Index (Request_Line, "gemini://") /= Request_Line'First then
-         raise Parse_Error with "request doesn't start with gemini://";
+      if Request_Line'Length = 0 then
+         raise Parse_Error with "request is empty";
       end if;
+
+      if not Is_Letter (Request_Line (Request_Line'First)) then
+         raise Parse_Error with "invalid request";
+      end if;
+
+      declare
+         Delimiter_Index : constant Natural := Strings.Fixed.Index (Request_Line, Scheme_Delimiter);
+      begin
+         if Delimiter_Index <= Request_Line'First then
+            raise Parse_Error with "scheme is empty";
+         elsif Request_Line (Request_Line'First .. Delimiter_Index - 1) /= Gemini then
+            raise Scheme_Error with "request doesn't start with " & Scheme;
+         end if;
+      end;
 
       if Request_Line (Request_Line'Last - 1 .. Request_Line'Last) /= CRLF then
          raise Parse_Error with "request doesn't end with \r\n";

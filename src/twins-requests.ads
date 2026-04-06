@@ -1,5 +1,6 @@
 package Twins.Requests is
    Parse_Error : exception;
+   Scheme_Error : exception;
 
    type Request is private;
 

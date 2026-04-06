@@ -21,7 +21,7 @@ package body Requests_Tests is
 
    procedure Test_Empty_Request (T : in out Test_Context) is
    begin
-      T.Expect_Raises (Empty_Request'Access, Requests.Parse_Error'Identity, "request doesn't start with gemini://");
+      T.Expect_Raises (Empty_Request'Access, Requests.Parse_Error'Identity, "request is empty");
    end Test_Empty_Request;
 
    procedure Too_Long_Request is
@@ -43,7 +43,7 @@ package body Requests_Tests is
 
    procedure Test_Wrong_Scheme (T : in out Test_Context) is
    begin
-      T.Expect_Raises (Wrong_Scheme'Access, Requests.Parse_Error'Identity, "request doesn't start with gemini://");
+      T.Expect_Raises (Wrong_Scheme'Access, Requests.Scheme_Error'Identity, "request doesn't start with gemini://");
    end Test_Wrong_Scheme;
 
    procedure No_End_CRLF is
@@ -220,6 +220,7 @@ package body Requests_Tests is
    begin
       T.Expect_Raises (Encoded_Slash_Traversal'Access, Requests.Parse_Error'Identity, "path contains ..");
    end Test_Encoded_Slash_Traversal;
+
    procedure CRLF_Only is
       Unused_Request : Requests.Request;
    begin
@@ -228,7 +229,7 @@ package body Requests_Tests is
 
    procedure Test_CRLF_Only (T : in out Test_Context) is
    begin
-      T.Expect_Raises (CRLF_Only'Access, Requests.Parse_Error'Identity, "request doesn't start with gemini://");
+      T.Expect_Raises (CRLF_Only'Access, Requests.Parse_Error'Identity, "invalid request");
    end Test_CRLF_Only;
 
    procedure Garbage_Input is
@@ -239,7 +240,7 @@ package body Requests_Tests is
 
    procedure Test_Garbage_Input (T : in out Test_Context) is
    begin
-      T.Expect_Raises (Garbage_Input'Access, Requests.Parse_Error'Identity, "request doesn't start with gemini://");
+      T.Expect_Raises (Garbage_Input'Access, Requests.Parse_Error'Identity, "scheme is empty");
    end Test_Garbage_Input;
 
    procedure Uppercase_Scheme is
@@ -250,7 +251,7 @@ package body Requests_Tests is
 
    procedure Test_Uppercase_Scheme (T : in out Test_Context) is
    begin
-      T.Expect_Raises (Uppercase_Scheme'Access, Requests.Parse_Error'Identity, "request doesn't start with gemini://");
+      T.Expect_Raises (Uppercase_Scheme'Access, Requests.Scheme_Error'Identity, "request doesn't start with gemini://");
    end Test_Uppercase_Scheme;
 
    procedure Leading_Space_Scheme is
@@ -261,7 +262,7 @@ package body Requests_Tests is
 
    procedure Test_Leading_Space_Scheme (T : in out Test_Context) is
    begin
-      T.Expect_Raises (Leading_Space_Scheme'Access, Requests.Parse_Error'Identity, "request doesn't start with gemini://");
+      T.Expect_Raises (Leading_Space_Scheme'Access, Requests.Parse_Error'Identity, "invalid request");
    end Test_Leading_Space_Scheme;
 
    procedure No_Line_Ending is

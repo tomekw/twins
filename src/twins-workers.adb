@@ -133,6 +133,13 @@ package body Twins.Workers is
                            Log (Error, Client_IP & " " & Response & " " & E.Exception_Message);
                            Child_Ctx.Write (TLS.Streams.To_Elements (Response & CRLF));
                         end;
+                     when E : Requests.Scheme_Error =>
+                        declare
+                           Response : constant String := "53 Proxy Request Refused";
+                        begin
+                           Log (Error, Client_IP & " " & Response & " " & E.Exception_Message);
+                           Child_Ctx.Write (TLS.Streams.To_Elements (Response & CRLF));
+                        end;
                      when Streams.Stream_IO.Name_Error | Streams.Stream_IO.Use_Error =>
                         begin
                            declare
