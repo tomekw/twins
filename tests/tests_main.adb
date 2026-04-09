@@ -1,8 +1,9 @@
 with Testy.Runners;
 with Testy.Reporters.Text;
 
-with Requests_Tests;
 with Configs_Tests;
+with Opts_Tests;
+with Requests_Tests;
 
 procedure Tests_Main is
    use Testy;
@@ -10,6 +11,12 @@ procedure Tests_Main is
    Test_Runner : Runners.Runner := Runners.Create;
    Test_Reporter : Reporters.Text.Text_Reporter;
 begin
+   Test_Runner.Add ("Valid arguments return Config", Configs_Tests.Test_Valid_Arguments'Access);
+   Test_Runner.Add ("Invalid port raises Config_Error", Configs_Tests.Test_Invalid_Port'Access);
+   Test_Runner.Add ("Invalid root raises Config_Error", Configs_Tests.Test_Invalid_Root'Access);
+   Test_Runner.Add ("Invalid cert file raises Config_Error", Configs_Tests.Test_Invalid_Cert_File'Access);
+   Test_Runner.Add ("Invalid key file raises Config_Error", Configs_Tests.Test_Invalid_Key_File'Access);
+
    Test_Runner.Add ("Returns Request on valid request line", Requests_Tests.Test_Valid_Request'Access);
    Test_Runner.Add ("Raises Parse_Error on empty request line", Requests_Tests.Test_Empty_Request'Access);
    Test_Runner.Add ("Raises Parse_Error on too long request line", Requests_Tests.Test_Too_Long_Request'Access);
@@ -61,8 +68,10 @@ begin
    Test_Runner.Add ("Content_Path root level file", Requests_Tests.Test_Content_Path_Root_Level_File'Access);
    Test_Runner.Add ("Content_Path nested no extension", Requests_Tests.Test_Content_Path_Nested_No_Extension'Access);
 
-   Test_Runner.Add ("No options return default Config", Configs_Tests.Test_Default_Options'Access);
-   Test_Runner.Add ("Valid arguments return Config", Configs_Tests.Test_Valid_Arguments'Access);
+   Test_Runner.Add ("Valid options return Command", Opts_Tests.Test_Valid_Options'Access);
+   Test_Runner.Add ("Invalid option raises Option_Error", Opts_Tests.Test_Invalid_Option'Access);
+   Test_Runner.Add ("Missing argument raises Option_Error", Opts_Tests.Test_Missing_Argument'Access);
+   Test_Runner.Add ("Missing arguments raise Option_Error", Opts_Tests.Test_Missing_Arguments'Access);
 
    Test_Runner.Run (Test_Reporter);
 end Tests_Main;

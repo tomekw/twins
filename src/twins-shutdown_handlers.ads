@@ -5,6 +5,8 @@ package Twins.Shutdown_Handlers is
    protected Shutdown_Handler is
       entry Wait;
 
+      entry Shutdown;
+
       function Shutdown_Requested return Boolean;
 
    private
@@ -17,6 +19,6 @@ package Twins.Shutdown_Handlers is
       pragma Attach_Handler (Handle_SIGINT, Interrupts.Names.SIGINT);
       pragma Attach_Handler (Handle_SIGTERM, Interrupts.Names.SIGTERM);
 
-      Shutdown : Boolean := False;
+      Perform_Shutdown : Boolean := False;
    end Shutdown_Handler;
 end Twins.Shutdown_Handlers;

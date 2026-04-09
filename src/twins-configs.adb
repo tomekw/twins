@@ -1,32 +1,50 @@
+with Ada.Directories;
+
 package body Twins.Configs is
-   function Parse (Arguments : CL_Arguments.Argument_List.Vector) return Config is
+   function Parse (Cmd : Opts.Command) return Config is
+      use String_Holders;
+
       Cfg : Config;
-      Arguments_Count : constant Natural := Natural (Arguments.Length);
    begin
-      if Arguments_Count = 0 then
-         return Cfg;
-      end if;
+      Cfg.Hostname := To_Holder (Cmd.Argument ("hostname", "localhost"));
 
       declare
-         I : Positive := Arguments.First_Index;
+         Port : constant String := Cmd.Argument ("port", "1965");
       begin
-         while I < Arguments_Count loop
-            if Arguments (I) = "-H" then
-               Cfg.Hostname := String_Holders.To_Holder (Arguments (I + 1));
-            elsif Arguments (I) = "-p" then
-               Cfg.Port := Sockets.Port_Type'Value (Arguments (I + 1));
-            elsif Arguments (I) = "-r" then
-               Cfg.Content_Root := String_Holders.To_Holder (Arguments (I + 1));
-            elsif Arguments (I) = "-c" then
-               Cfg.Cert_File := String_Holders.To_Holder (Arguments (I + 1));
-            elsif Arguments (I) = "-k" then
-               Cfg.Key_File := String_Holders.To_Holder (Arguments (I + 1));
-            else
-               raise Config_Error with "invalid option: " & Arguments (I);
-            end if;
+         Cfg.Port := Sockets.Port_Type'Value (Port);
+      exception
+         when Constraint_Error =>
+            raise Config_Error with "invalid port: " & Port;
+      end;
 
-            I := I + 2;
-         end loop;
+      declare
+         Root : constant String := Cmd.Argument ("root", "content");
+      begin
+         if not Directories.Exists (Root) then
+            raise Config_Error with "invalid root: " & Root;
+         end if;
+
+         Cfg.Content_Root := To_Holder (Root);
+      end;
+
+      declare
+         Cert_File : constant String := Cmd.Argument ("cert", "cert.pem");
+      begin
+         if not Directories.Exists (Cert_File) then
+            raise Config_Error with "invalid cert file: " & Cert_File;
+         end if;
+
+         Cfg.Cert_File := To_Holder (Cert_File);
+      end;
+
+      declare
+         Key_File : constant String := Cmd.Argument ("key", "key.pem");
+      begin
+         if not Directories.Exists (Key_File) then
+            raise Config_Error with "invalid key file: " & Key_File;
+         end if;
+
+         Cfg.Key_File := To_Holder (Key_File);
       end;
 
       return Cfg;

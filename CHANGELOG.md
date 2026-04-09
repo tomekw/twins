@@ -1,6 +1,8 @@
 ## unreleased
 
 * move logger to a separate task backed up by an internal queue
+* rework arguments parsing
+* validate config options
 
 ## 0.2.0
 
