@@ -1,5 +1,7 @@
 ## unreleased
 
+## 0.3.0
+
 * move logger to a separate task backed up by an internal queue
 * rework arguments parsing
 * validate config options

@@ -6,7 +6,7 @@ package Twins is
    use Ada;
    use GNAT;
 
-   Version : constant String := "0.2.0";
+   Version : constant String := "0.3.0";
 
    package String_Holders is new Containers.Indefinite_Holders (Element_Type => String);
 
