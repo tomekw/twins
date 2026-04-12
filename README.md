@@ -6,7 +6,7 @@ Static files [Gemini](https://geminiprotocol.net) server in Ada.
 
 This is alpha software. I'm actively working it. YMMV.
 
-Tested on Linux x86_64, MacOS ARM and Windows x86_64.
+Tested on Linux x86_64, MacOS ARM, OpenBSD x86_64 and Windows x86_64.
 
 ## Installation
 
@@ -39,19 +39,15 @@ cp target/release/bin/twins ~/bin/twins
 Usage: twins [options]
 
 Options:
-    -H  hostname             default: localhost
-    -p  port                 default: 1965
-    -r  content root         default: "content" in the current directory
-    -c  certificate file     default: "cert.pem" in the current directory
-    -k  certificate key      default: "key.pem" in the current directory
-    -h  print this message
+    --hostname|-H <hostname>   Server hostname (default: localhost)
+    --port|-p <port>           Server port (default: 1965)
+    --root|-r <root>           Content root (default: "content" in the current directory)
+    --cert|-c <cert>           TLS certificate path (default: "cert.pem" in the current directory)
+    --key|-k <key>             TLS key path (default: "key.pem" in the current directory)
+    --help|-h                  Print this message
 ```
 
 or use an example systemd `twins.service` at `resources/systemd`.
-
-## Roadmap
-
-* [ ] implement config options validation. Just don't make mistakes, okay?
 
 ## Disclaimer
 
