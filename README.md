@@ -12,13 +12,13 @@ Tested on Linux x86_64, MacOS ARM, OpenBSD x86_64 and Windows x86_64.
 
 See [Releases](https://github.com/tomekw/twins/releases).
 
-```bash
+``` shell
 curl -L https://github.com/tomekw/twins/releases/download/VERSION/twins-VERSION-PLATFORM -o twins && chmod +x twins
 ```
 
 Copy it somewhere on your `PATH`:
 
-```bash
+``` shell
 cp twins ~/bin/twins
 ```
 
@@ -48,6 +48,15 @@ Options:
 ```
 
 or use an example systemd `twins.service` at `resources/systemd`.
+
+You can create a self-signed certificate for `localhost` like so:
+
+``` shell
+openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 \
+                    -keyout key.pem -out cert.pem -days 3650 -nodes \
+                    -subj "/CN=localhost" \
+                    -addext "subjectAltName=DNS:localhost"
+```
 
 ## Disclaimer
 
