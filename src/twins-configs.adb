@@ -1,15 +1,15 @@
 with Ada.Directories;
 
 package body Twins.Configs is
-   function Parse (Cmd : Opts.Command) return Config is
+   function Parse (Result : Opts.Result) return Config is
       use String_Holders;
 
       Cfg : Config;
    begin
-      Cfg.Hostname := To_Holder (Cmd.Argument ("hostname", "localhost"));
+      Cfg.Hostname := To_Holder (Result.Arg ("hostname", "localhost"));
 
       declare
-         Port : constant String := Cmd.Argument ("port", "1965");
+         Port : constant String := Result.Arg ("port", "1965");
       begin
          Cfg.Port := Sockets.Port_Type'Value (Port);
       exception
@@ -18,7 +18,7 @@ package body Twins.Configs is
       end;
 
       declare
-         Root : constant String := Cmd.Argument ("root", "content");
+         Root : constant String := Result.Arg ("root", "content");
       begin
          if not Directories.Exists (Root) then
             raise Config_Error with "invalid root: " & Root;
@@ -28,7 +28,7 @@ package body Twins.Configs is
       end;
 
       declare
-         Cert_File : constant String := Cmd.Argument ("cert", "cert.pem");
+         Cert_File : constant String := Result.Arg ("cert", "cert.pem");
       begin
          if not Directories.Exists (Cert_File) then
             raise Config_Error with "invalid cert file: " & Cert_File;
@@ -38,7 +38,7 @@ package body Twins.Configs is
       end;
 
       declare
-         Key_File : constant String := Cmd.Argument ("key", "key.pem");
+         Key_File : constant String := Result.Arg ("key", "key.pem");
       begin
          if not Directories.Exists (Key_File) then
             raise Config_Error with "invalid key file: " & Key_File;

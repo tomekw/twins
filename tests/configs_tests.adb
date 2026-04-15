@@ -1,29 +1,30 @@
 with GNAT.Sockets;
 
+with Tackle.Opts;
 with Twins.Configs;
-with Twins.Opts;
 
 package body Configs_Tests is
    use GNAT;
    use Twins;
-   use Twins.Opts;
+   use Tackle;
+   use Tackle.Opts;
 
    use type Sockets.Port_Type;
 
-   Options : constant Options_List := [Argument ("hostname", 'H', "Server hostname (default: localhost)"),
-                                       Argument ("port",     'p', "Server port (default: 1965)"),
-                                       Argument ("root",     'r', "Content root (default: ""content"" in the current directory)"),
-                                       Argument ("cert",     'c', "TLS certificate path (default: ""cert.pem"" in the current directory)"),
-                                       Argument ("key",      'k', "TLS key path (default: ""key.pem"" in the current directory)"),
-                                       Flag     ("help",     'h', "Print this message")];
+   Options : constant Option_List := [Arg  ("hostname", 'H', "Server hostname (default: localhost)"),
+                                      Arg  ("port",     'p', "Server port (default: 1965)"),
+                                      Arg  ("root",     'r', "Content root (default: ""content"" in the current directory)"),
+                                      Arg  ("cert",     'c', "TLS certificate path (default: ""cert.pem"" in the current directory)"),
+                                      Arg  ("key",      'k', "TLS key path (default: ""key.pem"" in the current directory)"),
+                                      Flag ("help",     'h', "Print this message")];
 
    procedure Test_Valid_Arguments (T : in out Test_Context) is
-      Arguments : constant Opts.Arguments_List :=
+      Arguments : constant Opts.Argument_List :=
          ["-H", "example.com", "-p", "1024", "-r", "resources/gemini/content",
           "-c", "resources/gemini/cert.pem", "-k", "resources/gemini/key.pem"];
-      Cmd : constant Opts.Command := Opts.Parse (Options, Arguments);
+      Result : constant Opts.Result := Opts.Parse (Arguments, Options);
 
-      Actual : constant Configs.Config := Configs.Parse (Cmd);
+      Actual : constant Configs.Config := Configs.Parse (Result);
    begin
       T.Expect (Actual.Hostname = "example.com", "Hostname: expected: example.com, got: " & Actual.Hostname);
       T.Expect (Actual.Port = 1024, "Port: expected: 1024, got:" & Actual.Port'Image);
@@ -33,12 +34,12 @@ package body Configs_Tests is
    end Test_Valid_Arguments;
 
    procedure Invalid_Port is
-      Arguments : constant Arguments_List := ["--port", "foo"];
-      Cmd : constant Command := Opts.Parse (Options, Arguments);
+      Arguments : constant Argument_List := ["--port", "foo"];
+      Result : constant Opts.Result := Opts.Parse (Arguments, Options);
 
       Unused_Config : Configs.Config;
    begin
-      Unused_Config := Configs.Parse (Cmd);
+      Unused_Config := Configs.Parse (Result);
    end Invalid_Port;
 
    procedure Test_Invalid_Port (T : in out Test_Context) is
@@ -47,12 +48,12 @@ package body Configs_Tests is
    end Test_Invalid_Port;
 
    procedure Invalid_Root is
-      Arguments : constant Arguments_List := ["--root", "/does/not/exist"];
-      Cmd : constant Command := Opts.Parse (Options, Arguments);
+      Arguments : constant Argument_List := ["--root", "/does/not/exist"];
+      Result : constant Opts.Result := Opts.Parse (Arguments, Options);
 
       Unused_Config : Configs.Config;
    begin
-      Unused_Config := Configs.Parse (Cmd);
+      Unused_Config := Configs.Parse (Result);
    end Invalid_Root;
 
    procedure Test_Invalid_Root (T : in out Test_Context) is
@@ -61,12 +62,12 @@ package body Configs_Tests is
    end Test_Invalid_Root;
 
    procedure Invalid_Cert_File is
-      Arguments : constant Arguments_List := ["--root", "resources/gemini/content", "--cert", "foo.pem"];
-      Cmd : constant Command := Opts.Parse (Options, Arguments);
+      Arguments : constant Argument_List := ["--root", "resources/gemini/content", "--cert", "foo.pem"];
+      Result : constant Opts.Result := Opts.Parse (Arguments, Options);
 
       Unused_Config : Configs.Config;
    begin
-      Unused_Config := Configs.Parse (Cmd);
+      Unused_Config := Configs.Parse (Result);
    end Invalid_Cert_File;
 
    procedure Test_Invalid_Cert_File (T : in out Test_Context) is
@@ -75,13 +76,13 @@ package body Configs_Tests is
    end Test_Invalid_Cert_File;
 
    procedure Invalid_Key_File is
-      Arguments : constant Arguments_List := ["--root", "resources/gemini/content", "--cert", "resources/gemini/cert.pem",
+      Arguments : constant Argument_List := ["--root", "resources/gemini/content", "--cert", "resources/gemini/cert.pem",
                                               "--key", "foo.pem"];
-      Cmd : constant Command := Opts.Parse (Options, Arguments);
+      Result : constant Opts.Result := Opts.Parse (Arguments, Options);
 
       Unused_Config : Configs.Config;
    begin
-      Unused_Config := Configs.Parse (Cmd);
+      Unused_Config := Configs.Parse (Result);
    end Invalid_Key_File;
 
    procedure Test_Invalid_Key_File (T : in out Test_Context) is

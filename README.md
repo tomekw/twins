@@ -39,12 +39,12 @@ cp target/release/bin/twins ~/bin/twins
 Usage: twins [options]
 
 Options:
-    --hostname|-H <hostname>   Server hostname (default: localhost)
-    --port|-p <port>           Server port (default: 1965)
-    --root|-r <root>           Content root (default: "content" in the current directory)
-    --cert|-c <cert>           TLS certificate path (default: "cert.pem" in the current directory)
-    --key|-k <key>             TLS key path (default: "key.pem" in the current directory)
-    --help|-h                  Print this message
+    --hostname, -H <hostname>   Server hostname (default: localhost)
+    --port, -p <port>           Server port (default: 1965)
+    --root, -r <root>           Content root (default: "content" in the current directory)
+    --cert, -c <cert>           TLS certificate path (default: "cert.pem" in the current directory)
+    --key, -k <key>             TLS key path (default: "key.pem" in the current directory)
+    --help, -h                  Print this message
 ```
 
 or use an example systemd `twins.service` at `resources/systemd`.
@@ -53,9 +53,9 @@ You can create a self-signed certificate for `localhost` like so:
 
 ``` shell
 openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 \
-                    -keyout key.pem -out cert.pem -days 3650 -nodes \
-                    -subj "/CN=localhost" \
-                    -addext "subjectAltName=DNS:localhost"
+                  -keyout key.pem -out cert.pem -days 3650 -nodes \
+                  -subj "/CN=localhost" \
+                  -addext "subjectAltName=DNS:localhost"
 ```
 
 ## Disclaimer

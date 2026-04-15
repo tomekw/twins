@@ -1,8 +1,10 @@
 with GNAT.Sockets;
 
-with Twins.Opts;
+with Tackle.Opts;
 
 package Twins.Configs is
+   use Tackle;
+
    Config_Error : exception;
 
    type Config is private;
@@ -13,7 +15,7 @@ package Twins.Configs is
    function Cert_File (Self : Config) return String;
    function Key_File (Self : Config) return String;
 
-   function Parse (Cmd : Opts.Command) return Config;
+   function Parse (Result : Opts.Result) return Config;
 
 private
 

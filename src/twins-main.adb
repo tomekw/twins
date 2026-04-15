@@ -2,10 +2,11 @@ with Ada.Command_Line;
 with Ada.Exceptions;
 with Ada.Text_IO;
 
+with Tackle.Opts;
+
 with Twins.Acceptors;
 with Twins.Configs;
 with Twins.Loggers;
-with Twins.Opts;
 with Twins.Shutdown_Handlers;
 with Twins.Workers;
 
@@ -13,20 +14,21 @@ procedure Twins.Main is
    use Ada;
 begin
    declare
-      use Twins.Opts;
+      use Tackle;
+      use Tackle.Opts;
 
-      Arguments : constant Opts.Arguments_List := Opts.Consume_Arguments;
+      Arguments : constant Opts.Argument_List := Opts.Consume_Arguments;
 
-      Options : constant Options_List := [Argument ("hostname", 'H', "Server hostname (default: localhost)"),
-                                          Argument ("port",     'p', "Server port (default: 1965)"),
-                                          Argument ("root",     'r', "Content root (default: ""content"" in the current directory)"),
-                                          Argument ("cert",     'c', "TLS certificate path (default: ""cert.pem"" in the current directory)"),
-                                          Argument ("key",      'k', "TLS key path (default: ""key.pem"" in the current directory)"),
-                                          Flag     ("help",     'h', "Print this message")];
+      Options : constant Option_List := [Arg  ("hostname", 'H', "Server hostname (default: localhost)"),
+                                         Arg  ("port",     'p', "Server port (default: 1965)"),
+                                         Arg  ("root",     'r', "Content root (default: ""content"" in the current directory)"),
+                                         Arg  ("cert",     'c', "TLS certificate path (default: ""cert.pem"" in the current directory)"),
+                                         Arg  ("key",      'k', "TLS key path (default: ""key.pem"" in the current directory)"),
+                                         Flag ("help",     'h', "Print this message")];
 
-      Cmd : constant Command := Opts.Parse (Options, Arguments);
+      Result : constant Opts.Result := Opts.Parse (Arguments, Options);
    begin
-      if Cmd.Has_Flag ("help") then
+      if Result.Has_Flag ("help") then
          Shutdown_Handlers.Shutdown_Handler.Shutdown;
          Loggers.Shutdown;
 
@@ -36,7 +38,7 @@ begin
       end if;
 
       declare
-         Cfg : constant Configs.Config := Configs.Parse (Cmd);
+         Cfg : constant Configs.Config := Configs.Parse (Result);
          Server_Acceptor : Acceptors.Acceptor;
 
          Workers_Count : constant Positive := 8;

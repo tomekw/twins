@@ -2,7 +2,6 @@ with Testy.Runners;
 with Testy.Reporters.Text;
 
 with Configs_Tests;
-with Opts_Tests;
 with Requests_Tests;
 
 procedure Tests_Main is
@@ -67,11 +66,6 @@ begin
    Test_Runner.Add ("Content_Path nested with extension", Requests_Tests.Test_Content_Path_Nested_With_Extension'Access);
    Test_Runner.Add ("Content_Path root level file", Requests_Tests.Test_Content_Path_Root_Level_File'Access);
    Test_Runner.Add ("Content_Path nested no extension", Requests_Tests.Test_Content_Path_Nested_No_Extension'Access);
-
-   Test_Runner.Add ("Valid options return Command", Opts_Tests.Test_Valid_Options'Access);
-   Test_Runner.Add ("Invalid option raises Option_Error", Opts_Tests.Test_Invalid_Option'Access);
-   Test_Runner.Add ("Missing argument raises Option_Error", Opts_Tests.Test_Missing_Argument'Access);
-   Test_Runner.Add ("Missing arguments raise Option_Error", Opts_Tests.Test_Missing_Arguments'Access);
 
    Test_Runner.Run (Test_Reporter);
 end Tests_Main;
