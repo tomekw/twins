@@ -1,5 +1,9 @@
 ## unreleased
 
+## 0.3.1
+
+* fix: option values can be "one letter long" now
+
 ## 0.3.0
 
 * move logger to a separate task backed up by an internal queue
