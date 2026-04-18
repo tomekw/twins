@@ -1,6 +1,7 @@
 ## unreleased
 
 * make workers count configurable via `--workers, -w`, 8 by default
+* change the tasks termination logic from ATC to poison pills
 
 ## 0.3.1
 
