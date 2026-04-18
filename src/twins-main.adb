@@ -15,23 +15,14 @@ procedure Twins.Main is
 begin
    declare
       use Tackle;
-      use Tackle.Opts;
 
       Arguments : constant Opts.Argument_List := Opts.Consume_Arguments;
 
-      Options : constant Option_List := [Arg  ("hostname", 'H', "Server hostname (default: localhost)"),
-                                         Arg  ("port",     'p', "Server port (default: 1965)"),
-                                         Arg  ("root",     'r', "Content root (default: ""content"" in the current directory)"),
-                                         Arg  ("cert",     'c', "TLS certificate path (default: ""cert.pem"" in the current directory)"),
-                                         Arg  ("key",      'k', "TLS key path (default: ""key.pem"" in the current directory)"),
-                                         Arg  ("workers",  'w', "Workers count (default: 8)"),
-                                         Flag ("help",     'h', "Print this message")];
-
-      Result : constant Opts.Result := Opts.Parse (Arguments, Options);
+      Result : constant Opts.Result := Opts.Parse (Arguments, Configs.Options);
       Cfg : constant Configs.Config := Configs.Parse (Result);
    begin
       if Result.Has_Flag ("help") then
-         Opts.Print_Usage ("twins", Options);
+         Opts.Print_Usage ("twins", Configs.Options);
          Loggers.Shutdown;
 
          return;

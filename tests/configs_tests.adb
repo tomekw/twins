@@ -11,20 +11,12 @@ package body Configs_Tests is
 
    use type Sockets.Port_Type;
 
-   Options : constant Option_List := [Arg  ("hostname", 'H', "Server hostname (default: localhost)"),
-                                      Arg  ("port",     'p', "Server port (default: 1965)"),
-                                      Arg  ("root",     'r', "Content root (default: ""content"" in the current directory)"),
-                                      Arg  ("cert",     'c', "TLS certificate path (default: ""cert.pem"" in the current directory)"),
-                                      Arg  ("key",      'k', "TLS key path (default: ""key.pem"" in the current directory)"),
-                                      Arg  ("workers",  'w', "Workers count (default: 8)"),
-                                      Flag ("help",     'h', "Print this message")];
-
    procedure Test_Valid_Arguments (T : in out Test_Context) is
       Arguments : constant Opts.Argument_List :=
          ["-H", "example.com", "-p", "1024", "-r", "resources/gemini/content",
           "-c", "resources/gemini/cert.pem", "-k", "resources/gemini/key.pem",
           "-w", "4"];
-      Result : constant Opts.Result := Opts.Parse (Arguments, Options);
+      Result : constant Opts.Result := Opts.Parse (Arguments, Configs.Options);
 
       Actual : constant Configs.Config := Configs.Parse (Result);
    begin
@@ -38,7 +30,7 @@ package body Configs_Tests is
 
    procedure Invalid_Port is
       Arguments : constant Argument_List := ["--port", "foo"];
-      Result : constant Opts.Result := Opts.Parse (Arguments, Options);
+      Result : constant Opts.Result := Opts.Parse (Arguments, Configs.Options);
 
       Unused_Config : Configs.Config;
    begin
@@ -52,7 +44,7 @@ package body Configs_Tests is
 
    procedure Invalid_Root is
       Arguments : constant Argument_List := ["--root", "/does/not/exist"];
-      Result : constant Opts.Result := Opts.Parse (Arguments, Options);
+      Result : constant Opts.Result := Opts.Parse (Arguments, Configs.Options);
 
       Unused_Config : Configs.Config;
    begin
@@ -66,7 +58,7 @@ package body Configs_Tests is
 
    procedure Invalid_Cert_File is
       Arguments : constant Argument_List := ["--root", "resources/gemini/content", "--cert", "foo.pem"];
-      Result : constant Opts.Result := Opts.Parse (Arguments, Options);
+      Result : constant Opts.Result := Opts.Parse (Arguments, Configs.Options);
 
       Unused_Config : Configs.Config;
    begin
@@ -81,7 +73,7 @@ package body Configs_Tests is
    procedure Invalid_Key_File is
       Arguments : constant Argument_List := ["--root", "resources/gemini/content", "--cert", "resources/gemini/cert.pem",
                                              "--key", "foo.pem"];
-      Result : constant Opts.Result := Opts.Parse (Arguments, Options);
+      Result : constant Opts.Result := Opts.Parse (Arguments, Configs.Options);
 
       Unused_Config : Configs.Config;
    begin
@@ -96,7 +88,7 @@ package body Configs_Tests is
    procedure Invalid_Workers_Count is
       Arguments : constant Argument_List := ["--root", "resources/gemini/content", "--cert", "resources/gemini/cert.pem",
                                              "--key", "resources/gemini/key.pem", "-w", "foo"];
-      Result : constant Opts.Result := Opts.Parse (Arguments, Options);
+      Result : constant Opts.Result := Opts.Parse (Arguments, Configs.Options);
 
       Unused_Config : Configs.Config;
    begin

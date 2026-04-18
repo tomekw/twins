@@ -4,6 +4,15 @@ with Tackle.Opts;
 
 package Twins.Configs is
    use Tackle;
+   use Tackle.Opts;
+
+   Options : constant Option_List := [Arg  ("hostname", 'H', "Server hostname (default: localhost)"),
+                                      Arg  ("port",     'p', "Server port (default: 1965)"),
+                                      Arg  ("root",     'r', "Content root (default: ""content"" in the current directory)"),
+                                      Arg  ("cert",     'c', "TLS certificate path (default: ""cert.pem"" in the current directory)"),
+                                      Arg  ("key",      'k', "TLS key path (default: ""key.pem"" in the current directory)"),
+                                      Arg  ("workers",  'w', "Workers count (default: 8)"),
+                                      Flag ("help",     'h', "Print this message")];
 
    Config_Error : exception;
 
