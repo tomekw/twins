@@ -53,6 +53,6 @@ package body Twins.Acceptors is
          Sockets.Close_Socket (Server_Socket);
       end if;
 
-      Log (Info, "Server shutting down...");
+      Log (Info, "Server shutting down");
    end Acceptor;
 end Twins.Acceptors;

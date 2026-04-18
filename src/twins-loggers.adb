@@ -41,10 +41,14 @@ package body Twins.Loggers is
    task body Log_Writer is
       Payload : Log_Payload;
    begin
+      Text_IO.Put_Line ("[INFO] " & Time & " Logger starting");
       loop
          Queue.Dequeue (Payload);
 
-         exit when Payload.Kind = Shutdown;
+         if Payload.Kind = Shutdown then
+            Text_IO.Put_Line ("[INFO] " & Time & " Logger shutting down");
+            exit;
+         end if;
 
          Text_IO.Put_Line ("[" & Payload.Level'Image & "] " & Time & " " & Payload.Message_Holder.Element);
       end loop;
