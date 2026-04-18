@@ -47,6 +47,15 @@ package body Twins.Configs is
          Cfg.Key_File := To_Holder (Key_File);
       end;
 
+      declare
+         Workers_Count : constant String := Result.Arg ("workers", "8");
+      begin
+         Cfg.Workers_Count := Positive'Value (Workers_Count);
+      exception
+         when Constraint_Error =>
+            raise Config_Error with "invalid workers count: " & Workers_Count;
+      end;
+
       return Cfg;
    end Parse;
 
@@ -74,4 +83,9 @@ package body Twins.Configs is
    begin
       return Self.Key_File.Element;
    end Key_File;
+
+   function Workers_Count (Self : Config) return Positive is
+   begin
+      return Self.Workers_Count;
+   end Workers_Count;
 end Twins.Configs;

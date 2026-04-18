@@ -60,6 +60,8 @@ package body Twins.Workers is
                Client_Socket := Sockets.No_Socket;
             end Close_Sockets;
          begin
+            Log (Info, "Worker starting");
+
             loop
                declare
                   use type Streams.Stream_Element_Offset;

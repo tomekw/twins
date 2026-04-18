@@ -15,6 +15,7 @@ begin
    Test_Runner.Add ("Invalid root raises Config_Error", Configs_Tests.Test_Invalid_Root'Access);
    Test_Runner.Add ("Invalid cert file raises Config_Error", Configs_Tests.Test_Invalid_Cert_File'Access);
    Test_Runner.Add ("Invalid key file raises Config_Error", Configs_Tests.Test_Invalid_Key_File'Access);
+   Test_Runner.Add ("Invalid workers count raises Config_Error", Configs_Tests.Test_Invalid_Workers_Count'Access);
 
    Test_Runner.Add ("Returns Request on valid request line", Requests_Tests.Test_Valid_Request'Access);
    Test_Runner.Add ("Raises Parse_Error on empty request line", Requests_Tests.Test_Empty_Request'Access);

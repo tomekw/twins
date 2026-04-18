@@ -24,6 +24,7 @@ begin
                                          Arg  ("root",     'r', "Content root (default: ""content"" in the current directory)"),
                                          Arg  ("cert",     'c', "TLS certificate path (default: ""cert.pem"" in the current directory)"),
                                          Arg  ("key",      'k', "TLS key path (default: ""key.pem"" in the current directory)"),
+                                         Arg  ("workers",  'w', "Workers count (default: 8)"),
                                          Flag ("help",     'h', "Print this message")];
 
       Result : constant Opts.Result := Opts.Parse (Arguments, Options);
@@ -41,8 +42,7 @@ begin
          Cfg : constant Configs.Config := Configs.Parse (Result);
          Server_Acceptor : Acceptors.Acceptor;
 
-         Workers_Count : constant Positive := 8;
-         Workers_Pool : array (1 .. Workers_Count) of Workers.Worker;
+         Workers_Pool : array (1 .. Cfg.Workers_Count) of Workers.Worker;
       begin
          Server_Acceptor.Init (Cfg);
 

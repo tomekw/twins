@@ -1,5 +1,7 @@
 ## unreleased
 
+* make workers count configurable via `--workers, -w`, 8 by default
+
 ## 0.3.1
 
 * fix: option values can be "one letter long" now

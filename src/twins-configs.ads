@@ -14,6 +14,7 @@ package Twins.Configs is
    function Content_Root (Self : Config) return String;
    function Cert_File (Self : Config) return String;
    function Key_File (Self : Config) return String;
+   function Workers_Count (Self : Config) return Positive;
 
    function Parse (Result : Opts.Result) return Config;
 
@@ -25,5 +26,6 @@ private
       Content_Root : String_Holders.Holder;
       Cert_File : String_Holders.Holder;
       Key_File : String_Holders.Holder;
+      Workers_Count : Positive;
    end record;
 end Twins.Configs;
