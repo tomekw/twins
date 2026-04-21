@@ -56,13 +56,13 @@ begin
       end;
 
       Loggers.Shutdown;
-   exception
-      when E : others =>
-         Loggers.Shutdown;
-
-         Text_IO.Put_Line (Text_IO.Standard_Error, "twins: " & Exceptions.Exception_Message (E));
-         Text_IO.New_Line (Text_IO.Standard_Error);
-         Text_IO.Put_Line (Text_IO.Standard_Error, "Run 'twins --help' for usage.");
-         Command_Line.Set_Exit_Status (Command_Line.Failure);
    end;
+exception
+   when E : others =>
+      Loggers.Shutdown;
+
+      Text_IO.Put_Line (Text_IO.Standard_Error, "twins: " & Exceptions.Exception_Message (E));
+      Text_IO.New_Line (Text_IO.Standard_Error);
+      Text_IO.Put_Line (Text_IO.Standard_Error, "Run 'twins --help' for usage.");
+      Command_Line.Set_Exit_Status (Command_Line.Failure);
 end Twins.Main;
