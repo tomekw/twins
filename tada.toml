@@ -1,6 +1,6 @@
 [package]
 name = "twins"
-version = "0.3.1"
+version = "0.4.0"
 
 [dependencies]
 padlock = "0.3.0"
