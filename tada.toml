@@ -3,7 +3,7 @@ name = "twins"
 version = "0.3.1"
 
 [dependencies]
-padlock = "0.1.0"
+padlock = "0.3.0"
 tackle = "0.3.0"
 
 [dev-dependencies]
